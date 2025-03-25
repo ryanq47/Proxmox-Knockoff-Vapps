@@ -166,38 +166,45 @@ class VappCreatorView:
 
     def render(self):
         ui.label("vapp creator")
-        self.create_aggrid()
+        self.create_stepper()
 
-    def create_aggrid(self):
-        self.vm_table = ui.aggrid(
-            {
-                "columnDefs": [
+    def create_stepper(self):
+        with ui.stepper().props("vertical").classes("w-full") as stepper:
+            with ui.step("select VM's"):
+                self.vm_table = ui.aggrid(
                     {
-                        "headerName": "UUID",
-                        "field": "uuid",
-                        "filter": "agTextColumnFilter",
-                        "floatingFilter": True,
-                    },
-                    {
-                        "headerName": "VM Name",
-                        "field": "username",
-                        "filter": "agTextColumnFilter",
-                        "floatingFilter": True,
-                    },
-                ],
-                "rowData": [],
-                "enableCellTextSelection": True,  # allows selecting data
-                "rowSelection": "multiple",
-            }
-        ).classes(f"w-full")
+                        "columnDefs": [
+                            {
+                                "headerName": "UUID",
+                                "field": "uuid",
+                                "filter": "agTextColumnFilter",
+                                "floatingFilter": True,
+                            },
+                            {
+                                "headerName": "VM Name",
+                                "field": "username",
+                                "filter": "agTextColumnFilter",
+                                "floatingFilter": True,
+                            },
+                        ],
+                        "rowData": [],
+                        "enableCellTextSelection": True,  # allows selecting data
+                        "rowSelection": "multiple",
+                    }
+                ).classes(f"w-full")
 
-        ui.separator()
+                ui.separator()
 
-        with ui.row().classes("w-full justify-between items-center mt-4 flex-1"):
-            # ui.label(get_vm_name(vmid))
-            ui.input("Template Name").classes("w-full flex-1")
-            ui.button("Create Template from Selected VM's").classes("w-full flex-1")
-            ui.separator()
+            with ui.step("Enter Vapp/Pool Name"):
+                with ui.row().classes(
+                    "w-full justify-between items-center mt-4 flex-1"
+                ):
+                    # ui.label(get_vm_name(vmid))
+                    ui.input("Template Name").classes("w-full flex-1")
+                    ui.separator()
+
+            with ui.step("Create Vapp/Pool"):
+                ui.button("Create Template from Selected VM's").classes("w-full flex-1")
 
     def _create_template(self):
         """
