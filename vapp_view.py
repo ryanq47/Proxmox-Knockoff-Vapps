@@ -1,7 +1,6 @@
 from nicegui import app, ui
 import requests
 import yarl
-from config import ConfigSingleton
 from utils import get_proxmox_class
 
 

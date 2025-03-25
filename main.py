@@ -1,7 +1,6 @@
 from nicegui import events, ui, app
 import logging
 from vapp_view import VappPage
-from config import ConfigSingleton
 from auth import *
 from database import clear_credentials
 

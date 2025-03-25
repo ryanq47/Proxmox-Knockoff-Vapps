@@ -1,7 +1,6 @@
 from functools import wraps
 from nicegui import app, ui
 import os
-from config import ConfigSingleton
 from proxmoxer import ProxmoxAPI
 from typing import Optional
 from fastapi import Request
