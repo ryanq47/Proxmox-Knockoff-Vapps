@@ -23,9 +23,13 @@ class VappPage:
             proxmox_class = get_proxmox_class()
 
             for node in proxmox_class.nodes.get():
-                print(node)
+                # print(node)
                 for vm in proxmox_class.nodes(node["node"]).qemu.get():
                     ui.label(f"{vm['vmid']}. {vm['name']} => {vm['status']}")
+
+            for pool in proxmox_class.pools.get():
+                ui.label(str(pool))
+                print(pool)
 
         except Exception as e:
             print(e)
