@@ -68,7 +68,7 @@ class VappCreatorView:
         raw_vm_data = get_all_vms(self.node_name)
 
         with ui.stepper().props("vertical").classes("w-full") as stepper:
-            print(raw_vm_data)
+            # print(raw_vm_data)
             with ui.step("Select VM's"):
                 self.vm_table = ui.aggrid(
                     {
@@ -171,7 +171,7 @@ class VappCreatorView:
             ui.notify(f"Creating VAPP Template: {vapp_name}", position="top-right")
 
             for row in selected_rows:
-                print(row)
+                # print(row)
                 # toss all id's in their own list
                 vm_ids.append(row.get("vmid"))
                 # ui.notify(
@@ -200,7 +200,7 @@ class VappCreatorView:
             )
 
             for vm_id in vm_ids:
-                print("Starting clone process")
+                # print("Starting clone process")
                 init_vmid = 700
                 new_vm_ids.append(init_vmid)
                 clone_host(
@@ -219,21 +219,21 @@ class VappCreatorView:
             #  convert those to templates
             #  Add to pool
             for new_vm_id in new_vm_ids:
-                print(f"Converting {new_vm_id} to template and adding to pool")
+                # print(f"Converting {new_vm_id} to template and adding to pool")
                 ui.notify(
                     f"Converting {new_vm_id} to template and adding to pool",
                     position="top-right",
                 )
-                print("converting")
+                # print("converting")
                 convert_to_template(vmid=new_vm_id, node=self.node_name)
-                print("waiting")
+                # print("waiting")
                 wait_for_unlock(new_vm_id, self.node_name)
-                print("add_host_to_pool")
+                # print("add_host_to_pool")
                 add_host_to_pool(
                     poolid=template_pool_name,
                     vmid=new_vm_id,
                 )
-                print("hosted added to pool")
+                # print("hosted added to pool")
 
         except Exception as e:
             ui.notify(
@@ -264,7 +264,7 @@ class TemplatesView:
             # ui.separator()
 
         except Exception as e:
-            print(e)
+            # print(e)
             ui.notify(f"Error occurred: {e}", position="top-right", type="warning")
 
     def clone_vms(self):
@@ -327,5 +327,5 @@ class ActivePoolsView:
             # ui.separator()
 
         except Exception as e:
-            print(e)
+            # print(e)
             ui.notify(f"Error occurred: {e}", position="top-right", type="warning")

@@ -56,3 +56,10 @@ Here's an example of a deployed Vapp:
 ![image](https://github.com/user-attachments/assets/debc45a5-1ef1-473a-9bd0-9e9925ee41bc)
 
  
+## Todo:
+
+- [X] Create Vapp template
+- [ ] Create Vapp from template
+      - Only include pools that start with "PPM_TEMPLATE"
+- [ ] Manage Vapp frmo template (start, stop, snapshot, etc)
+      - remove pools that start with "PPM_TEMPLATE"
