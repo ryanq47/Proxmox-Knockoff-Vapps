@@ -50,3 +50,9 @@ Ideally, each Vapp would have the follwoing:
  - A FireWall Template (WAN: NIC on said proxmox node, LAN: NIC Created for Vapp)
  
  This allows for multiple labs to exist on one NIC, and is the easiest way to get this rolling. 
+
+Here's an example of a deployed Vapp:
+
+![image](https://github.com/user-attachments/assets/debc45a5-1ef1-473a-9bd0-9e9925ee41bc)
+
+ 
