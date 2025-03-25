@@ -73,7 +73,7 @@ def restart_vm(vmid):
         vms = proxmox.nodes(node_name).qemu.get()
         for vm in vms:
             if vm["vmid"] == vmid:
-                ui.notify(f"Reseting VM {vmid}", position="top-right")
+                ui.notify(f"Restarting VM {vmid}", position="top-right")
                 # Issue the reset command for the found VM.
                 return proxmox.nodes(node_name).qemu(vmid).status.reset.post()
     raise ValueError(f"VM with vmid {vmid} not found")

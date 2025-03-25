@@ -117,11 +117,14 @@ class VappPage:
                     with ui.row().classes(
                         "w-full justify-between items-center mt-4 flex-1"
                     ):
+                        # stop_all_vms_in_pool
                         ui.button(
                             "Start", on_click=partial(get_all_vms_in_pool, pool_name)
                         ).classes("w-full flex-1")
                         ui.button("Stop").classes("w-full flex-1")
+                        # restart_all_vms_in_pool
                         ui.button("Restart").classes("w-full flex-1")
+                        # delete_all_resources_in_pool (nic, VM's, etc)
                         ui.button("Delete").classes("w-full flex-1")
                         select1 = ui.select(
                             ["snapshot1", "snapshot2", "snapshot3"], value="snapshot1"
@@ -136,8 +139,11 @@ class VappPage:
                                     "w-full justify-between items-center mt-4 "
                                 ):
                                     ui.label(get_vm_name(vmid))
-                                    ui.button("Start")  # start_vm(vmid) - use partial
-                                    ui.button("stop")  # stop_vm(vmid)
+                                    ui.button("Start", on_click=partial(start_vm, vmid))
+                                    ui.button("Stop", on_click=partial(stop_vm, vmid))
+                                    ui.button(
+                                        "Restart", on_click=partial(restart_vm, vmid)
+                                    )
                                     ui.separator()
         except Exception as e:
             print(e)
