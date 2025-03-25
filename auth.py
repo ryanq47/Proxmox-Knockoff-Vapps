@@ -1,122 +1,79 @@
 from functools import wraps
 from nicegui import app, ui
-import requests
-import re
-import yarl
-from dotenv import load_dotenv
 import os
+from config import ConfigSingleton
+from proxmoxer import ProxmoxAPI
+from typing import Optional
+from fastapi import Request
+from fastapi.responses import RedirectResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+from database import set_credential
 
 jwt_regex = r"^[A-Za-z0-9-_]+?\.[A-Za-z0-9-_]+\.([A-Za-z0-9-_]+)?$"
+unrestricted_page_routes = {"/login"}
 
 
-class AuthView:
-    def __init__(self):
-        self.username = None
-        self.password = None
-        # self.proxmox_url = proxmox_url  # url of server, full thing + protocol
+class AuthMiddleware(BaseHTTPMiddleware):
+    """This middleware restricts access to all NiceGUI pages.
 
-    def render(self):
-        # Clear user-specific session data on load of auth page
-        # Doing this as a failsafe for dev, and if any session data gets left in there
-        app.storage.user.clear()
-        add_particles_background()
-        ui.page_title("WhisperNet")
+    It redirects the user to the login page if they are not authenticated.
+    """
 
-        with ui.column().classes(
-            "items-center justify-center absolute-center w-full h-screen"
-        ):
-            with ui.card().classes("w-full max-w-sm p-6 shadow-lg"):
-                ui.label("Login").classes(
-                    "text-2xl font-bold text-center text-slate-600 mb-4"
-                )
-                ui.markdown(
-                    "API address is set at run time, with the `--api-host` argument"
-                )
-                ui.separator().classes("mb-4")
-
-                # Input fields and login button
-                with ui.column().classes("gap-4 w-full"):
-                    self.proxmox_url_input = (
-                        ui.input("Server", placeholder="http(s)://<address>:<port>")
-                        .props("outlined")
-                        .classes("w-full")
-                    )
-                    # Config.set_api_host(host=self.proxmox_url.value)
-
-                    self.username_input = (
-                        ui.input("Username").props("outlined").classes("w-full")
-                    )
-                    self.password_input = (
-                        ui.input("Password", password=True, password_toggle_button=True)
-                        .props("outlined")
-                        .classes("w-full")
-                    ).on(
-                        "keydown.enter",
-                        lambda e: ui.notification(self.get_ticket()),
-                    )
-
-                    ui.button("Login", on_click=self.get_ticket).classes(
-                        "bg-blue-500 text-white w-full hover:bg-blue-600 rounded-lg"
-                    )
-
-                # # Forgot password link centered below the form
-                # ui.link("Forgot Password?", "/forgot-password").classes(
-                #     "text-sm text-slate-500 mt-4 text-center"
-                # )
-
-    def get_ticket(self):
-        # Retrieve the current values from the input fields ONLY on click of login
-        try:
-            proxmox_url = self.proxmox_url_input.value
-            username = self.username_input.value
-            password = self.password_input.value
-
-            data = {"username": username, "password": password}
-            print(proxmox_url)
-
-            base_url = yarl.URL(proxmox_url)
-            url = base_url / "api2" / "json" / "access" / "ticket"
-            print(url)
-            response = requests.post(url, data=data, verify=False)
-            if response.status_code == 200:
-                # print(response.json())
-                ui.notify("Successful login", position="top-right")
-                # set creds somewher, perhaps user storage?
-                app.storage.user["auth_dict"] = response.json()
-
-                ui.navigate.to("/")
-                # return response
-            else:
-                ui.notify(
-                    f"Could not login: {response.status_code}",
-                    position="top-right",
-                    type="negative",
-                )
-        except Exception as e:
-            ui.notify(
-                f"Could not login: {e}",
-                position="top-right",
-                type="negative",
-            )
+    async def dispatch(self, request: Request, call_next):
+        if not app.storage.user.get("authenticated", False):
+            if (
+                not request.url.path.startswith("/_nicegui")
+                and request.url.path not in unrestricted_page_routes
+            ):
+                return RedirectResponse(f"/login?redirect_to={request.url.path}")
+        return await call_next(request)
 
 
-@ui.page("/logout")
-def logout():
-    check_login()
-    app.storage.user.clear()  # Clear user-specific session data
-    ui.notify("Logged out successfully", type="positive", position="top-right")
-    ui.navigate.to("/auth")
+# add middleware
+
+app.add_middleware(AuthMiddleware)
 
 
-def check_login():
-    auth_dict = app.storage.user.get("auth_dict", {}).get("data", None)
-    if auth_dict:
-        return True
-    else:
-        ui.notify(
-            "Please log in to access this page", type="negative", position="top-right"
+@ui.page("/login")
+def login(redirect_to: str = "/") -> Optional[RedirectResponse]:
+    def try_login() -> None:
+        proxmox = ProxmoxAPI(
+            proxmox_url_input.value,
+            user=username_input.value,
+            password=password_input.value,
+            verify_ssl=False,
         )
-        ui.navigate.to("/auth")
+
+        # Store credentials (or just the URL and username, token, etc.)
+        set_credential("proxmox_url", proxmox_url_input.value)
+        set_credential("username", username_input.value)
+        set_credential("password", password_input.value)
+
+        # Optionally, store a token if available:
+        # set_credential("token", token_value)
+
+        if proxmox:
+            app.storage.user.update({"authenticated": True})
+            ui.navigate.to(redirect_to)
+        else:
+            ui.notify("Wrong username or password", color="negative")
+
+    if app.storage.user.get("authenticated", False):
+        return RedirectResponse("/")
+
+    with ui.card().classes("absolute-center"):
+        proxmox_url_input = (
+            ui.input("Server", placeholder="<address>:<port>")
+            .props("outlined")
+            .classes("w-full")
+        )
+        username_input = ui.input("Username").props("outlined").classes("w-full")
+        password_input = (
+            ui.input("Password", password=True, password_toggle_button=True)
+            .props("outlined")
+            .classes("w-full")
+        )
+        ui.button("Log in", on_click=try_login)
 
 
 # @ui.page("/particles")
