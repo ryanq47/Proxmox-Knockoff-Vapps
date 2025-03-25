@@ -111,7 +111,7 @@ class VappCreatorView:
                     ui.button("Next", on_click=stepper.next)
                     ui.button("Back", on_click=stepper.previous)
 
-            with ui.step("Enter Vapp/Pool Name"):
+            with ui.step("Enter Vapp template Name"):
                 with ui.row().classes(
                     "w-full justify-between items-center mt-4 flex-1"
                 ):
@@ -162,32 +162,84 @@ class VappCreatorView:
          - wait on that, could have a "which node" to put on, would probably work best to do this
          - need to double check this, aparently pools are datacenter wide
         """
-        selected_rows = await self.vm_table.get_selected_rows()
-        vm_ids = []
+        try:
+            selected_rows = await self.vm_table.get_selected_rows()
+            vm_ids = []
 
-        vapp_name = (self.vapp_name.value).upper()
+            vapp_name = (self.vapp_name.value).upper()
 
-        ui.notify(f"Creating VAPP: {vapp_name}", position="top-right")
+            ui.notify(f"Creating VAPP Template: {vapp_name}", position="top-right")
 
-        for row in selected_rows:
-            print(row)
-            # toss all id's in their own list
-            vm_ids.append(row.get("vmid"))
-            # ui.notify(
-            #     f'Adding cloned {row.get("name")} to vapp {self.vapp_name.value}',
-            #     position="top-right",
-            # )
+            for row in selected_rows:
+                print(row)
+                # toss all id's in their own list
+                vm_ids.append(row.get("vmid"))
+                # ui.notify(
+                #     f'Adding cloned {row.get("name")} to vapp {self.vapp_name.value}',
+                #     position="top-right",
+                # )
 
-        # create a NIC, ex: "POOLNAME-NIC"
-        # https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/network
-        create_nic(
-            iface_name=f"PPM_{vapp_name}_NIC",
-            node="proxmox",  # user input for which node to clone to
-            type="bridge",
-        )
+            # create a NIC, ex: "POOLNAME-NIC"
+            # https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/network
+            create_nic(
+                iface_name=f"PPM_{vapp_name}_NIC",
+                node=self.node_name,  # user input for which node to clone to
+                type="bridge",
+            )
 
-        # Clone hosts
-        # for i in hosts, clone
+            # Create template pool,
+            template_pool_name = f"PPM_TEMPLATE_{vapp_name}"
+            create_pool(poolid=template_pool_name)
+
+            new_vm_ids = []
+            # clone hosts needed
+            # for host in selected_hosts:
+            ui.notify(
+                f"Starting process",
+                position="top-right",
+            )
+
+            for vm_id in vm_ids:
+                print("Starting clone process")
+                init_vmid = 700
+                new_vm_ids.append(init_vmid)
+                clone_host(
+                    node=self.node_name, new_id=init_vmid, vmid_of_host_to_clone=vm_id
+                )
+                wait_for_unlock(
+                    init_vmid, self.node_name
+                )  # waits for host to get out of lock
+                init_vmid += 1  # ← Don't forget to increment correctly
+
+            ui.notify(
+                f"Convert to template and add to pool",
+                position="top-right",
+            )
+
+            #  convert those to templates
+            #  Add to pool
+            for new_vm_id in new_vm_ids:
+                print(f"Converting {new_vm_id} to template and adding to pool")
+                ui.notify(
+                    f"Converting {new_vm_id} to template and adding to pool",
+                    position="top-right",
+                )
+                print("converting")
+                convert_to_template(vmid=new_vm_id, node=self.node_name)
+                print("waiting")
+                wait_for_unlock(new_vm_id, self.node_name)
+                print("add_host_to_pool")
+                add_host_to_pool(
+                    poolid=template_pool_name,
+                    vmid=new_vm_id,
+                )
+                print("hosted added to pool")
+
+        except Exception as e:
+            ui.notify(
+                f"Error creating vapp template: {e}",
+                position="top-right",
+            )
 
 
 class TemplatesView:
@@ -214,6 +266,16 @@ class TemplatesView:
         except Exception as e:
             print(e)
             ui.notify(f"Error occurred: {e}", position="top-right", type="warning")
+
+    def clone_vms(self):
+        """
+        Does a few things:
+
+        1. Creates pool "PPM_<VAPP_NAME>
+        2. Clones each VM template with the name PPM_TEMPLATE_<TEMPLATE_NAME>
+        3. Add those new VM's to that pool
+        4. Starts the VM's in that pool
+        """
 
 
 class ActivePoolsView:

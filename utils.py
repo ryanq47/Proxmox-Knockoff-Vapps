@@ -193,3 +193,88 @@ def create_nic(iface_name, node, type="bridge"):
             # vm_list_of_dicts = proxmox.nodes(node_name).qemu.get()
     except Exception as e:
         ui.notify(f"Error creating NIC: {e}", position="top-right", type="warning")
+
+
+def create_pool(poolid: str):
+    """
+    Creates a pool
+
+    poolid (str): A name for the pool
+    """
+
+    proxmox = get_proxmox_class()
+
+    try:
+        proxmox.pools.post(poolid=poolid)
+        ui.notify(f"Created pool {poolid}", position="top-right")
+    except Exception as e:
+        ui.notify(f"Error creating POOL: {e}", position="top-right", type="warning")
+
+
+def clone_host(new_id, node, vmid_of_host_to_clone):
+    """
+    Clones a VM to a new VM ID.
+
+    new_id (int): New VM ID
+    node (str): Node name
+    vmid_of_host_to_clone (int): Existing VM ID to clone
+    """
+    proxmox = get_proxmox_class()
+
+    try:
+        proxmox.nodes(node).qemu(vmid_of_host_to_clone).clone().post(newid=new_id)
+        ui.notify(
+            f"Cloned host {vmid_of_host_to_clone} -> {new_id}", position="top-right"
+        )
+    except Exception as e:
+        ui.notify(f"Error cloning host: {e}", position="top-right", type="warning")
+
+
+def add_host_to_pool(poolid, vmid):
+    """
+    Adds a VM to an existing Proxmox pool using PUT /pools/{poolid}
+    """
+    proxmox = get_proxmox_class()
+    try:
+        proxmox.pools(poolid).put(vms=str(vmid))
+        ui.notify(f"Added host {vmid} to pool '{poolid}'", position="top-right")
+    except Exception as e:
+        ui.notify(f"Error adding to pool: {e}", position="top-right", type="warning")
+
+
+def convert_to_template(vmid, node):
+    """
+    Converts a VM into a template.
+
+    vmid (int): VM ID to convert
+    node (str): Node where the VM resides
+    """
+    proxmox = get_proxmox_class()
+
+    try:
+        proxmox.nodes(node).qemu(vmid).template().post()
+        ui.notify(f"Converted host {vmid} to template", position="top-right")
+    except Exception as e:
+        ui.notify(
+            f"Error converting to template: {e}", position="top-right", type="warning"
+        )
+
+
+import time
+
+
+def wait_for_unlock(vmid, node, timeout=60):
+    """
+    Waits until the specified VM is no longer locked.
+    """
+    proxmox = get_proxmox_class()
+    start = time.time()
+
+    while time.time() - start < timeout:
+        status = proxmox.nodes(node).qemu(vmid).status.current.get()
+        if "lock" not in status:
+            return
+        ui.notify(f"Host {vmid} is in lock... waiting for unlock", position="top-right")
+        time.sleep(1)
+
+    raise TimeoutError(f"VM {vmid} is still locked after {timeout} seconds.")

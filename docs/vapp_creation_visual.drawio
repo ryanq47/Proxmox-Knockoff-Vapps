@@ -1,0 +1,154 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0" version="26.1.3">
+  <diagram name="Page-1" id="2Z2gw2r-aSij19w_DUAC">
+    <mxGraphModel dx="1826" dy="1351" grid="1" gridSize="6" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-66" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;fillColor=#60a917;strokeColor=#2D7600;dashed=1;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-65" target="G-ZVylhde3zBr-N8MHB2-43">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="564" y="372" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-65" value="PPM_&amp;lt;VAPP_NAME&amp;gt;_NIC" style="sketch=0;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#505050;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;align=center;shape=mxgraph.office.devices.nic;" vertex="1" parent="1">
+          <mxGeometry x="516" y="528" width="57" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-55" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-48" target="G-ZVylhde3zBr-N8MHB2-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-24" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-19" target="G-ZVylhde3zBr-N8MHB2-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-25" value="Convert to&amp;nbsp;&lt;div&gt;template&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="G-ZVylhde3zBr-N8MHB2-24">
+          <mxGeometry x="0.3448" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-1" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="-130" y="-97" width="402" height="227" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-6" value="" style="rounded=0;whiteSpace=wrap;html=1;container=1;" vertex="1" parent="G-ZVylhde3zBr-N8MHB2-1">
+          <mxGeometry width="402" height="227" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-7" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="G-ZVylhde3zBr-N8MHB2-1" source="G-ZVylhde3zBr-N8MHB2-8" target="G-ZVylhde3zBr-N8MHB2-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-8" value="Host01&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/windows_server.svg;" vertex="1" parent="G-ZVylhde3zBr-N8MHB2-1">
+          <mxGeometry x="75" y="21" width="41" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-9" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="G-ZVylhde3zBr-N8MHB2-1" source="G-ZVylhde3zBr-N8MHB2-10" target="G-ZVylhde3zBr-N8MHB2-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-10" value="Host02&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/windows_server.svg;" vertex="1" parent="G-ZVylhde3zBr-N8MHB2-1">
+          <mxGeometry x="68" y="129" width="41" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-11" value="LAB - Template&lt;div&gt;WAN: Proxmox NIC&lt;/div&gt;&lt;div&gt;LAN: None&lt;/div&gt;" style="image;html=1;image=img/lib/clip_art/networking/Firewall_02_128x128.png" vertex="1" parent="G-ZVylhde3zBr-N8MHB2-1">
+          <mxGeometry x="216" y="36" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-14" value="Template:" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="18" y="-131" width="87" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-26" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-20" target="G-ZVylhde3zBr-N8MHB2-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-27" value="Convert to&amp;nbsp;&lt;div&gt;template&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="G-ZVylhde3zBr-N8MHB2-26">
+          <mxGeometry x="0.1897" y="-1" relative="1" as="geometry">
+            <mxPoint x="1" y="7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-20" value="Host02" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#4495D1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="920" y="39" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-50" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-22" target="G-ZVylhde3zBr-N8MHB2-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-22" value="PPM_TEMPLATE_&amp;lt;VAPP_NAME&amp;gt;_Host01" style="shadow=0;dashed=0;html=1;strokeColor=#23445d;fillColor=#bac8d3;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="680" y="199" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-49" value="" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-23" target="G-ZVylhde3zBr-N8MHB2-47">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-23" value="PPM_TEMPLATE_&amp;lt;VAPP_NAME&amp;gt;_Host01" style="shadow=0;dashed=0;html=1;strokeColor=#23445d;fillColor=#bac8d3;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="920" y="199" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-19" value="Host01" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#4495D1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="680" y="39" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-28" value="What happens when creating a VAPP from live machines" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="680" y="-390" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-38" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-29" target="G-ZVylhde3zBr-N8MHB2-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-40" value="Rename/Copy" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="G-ZVylhde3zBr-N8MHB2-38">
+          <mxGeometry x="0.2991" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-29" value="FW Template&lt;br&gt;(pre-existing)" style="shadow=0;dashed=0;html=1;strokeColor=#23445d;fillColor=#bac8d3;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="39" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-34" value="Host02" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#4495D1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="920" y="-120" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-35" value="Host01" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#4495D1;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="680" y="-120" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-51" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-37" target="G-ZVylhde3zBr-N8MHB2-48">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-37" value="PPM_TEMPLATE_&amp;lt;VAPP_NAME&amp;gt;_Firewall" style="shadow=0;dashed=0;html=1;strokeColor=#23445d;fillColor=#bac8d3;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="200" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-53" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-43" target="G-ZVylhde3zBr-N8MHB2-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-43" value="PPM_&amp;lt;VAPP_NAME&amp;gt;_Host01" style="shadow=0;dashed=0;html=1;strokeColor=#006EAF;fillColor=#1ba1e2;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;fontColor=light-dark(#000000, #121212);" vertex="1" parent="1">
+          <mxGeometry x="680" y="350" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-46" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://static.vecteezy.com/system/resources/previews/007/933/606/original/colorful-swimming-pool-icon-isolated-on-white-illustration-vector.jpg;" vertex="1" parent="1">
+          <mxGeometry x="796.2" y="600" width="292.4" height="194.93" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-54" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-56" target="G-ZVylhde3zBr-N8MHB2-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-47" value="PPM_&amp;lt;VAPP_NAME&amp;gt;_Host02" style="shadow=0;dashed=0;html=1;strokeColor=#006EAF;fillColor=#1ba1e2;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;fontColor=light-dark(#000000, #121212);" vertex="1" parent="1">
+          <mxGeometry x="920" y="351" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-48" value="PPM_&amp;lt;VAPP_NAME&amp;gt;_Firewall" style="shadow=0;dashed=0;html=1;strokeColor=#006EAF;fillColor=#1ba1e2;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.2d.virtual_machine;fontColor=light-dark(#000000, #121212);" vertex="1" parent="1">
+          <mxGeometry x="1180" y="350" width="44.8" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-57" value="" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-47" target="G-ZVylhde3zBr-N8MHB2-56">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="942" y="395" as="sourcePoint" />
+            <mxPoint x="942" y="600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-56" value="Add to pool&lt;div&gt;PPM_&amp;lt;VAPP_NAME&amp;gt;_POOL&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="825.4" y="456" width="234" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-61" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step3: User clicks &quot;create template&quot;&lt;/h1&gt;&lt;div&gt;The selected live machines are cloned, and those clones are turned into templates.Those templates are&amp;nbsp;&lt;/div&gt;&lt;div&gt;places into a new pool named &quot;PPM_TEMPLATE_&amp;lt;VAPP_NAME&amp;gt;&quot;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;If needed, the user can log into proxmox and adjust any settings withing the template&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Step4: User clicks &quot;Clone&quot; on the recently created template&lt;/h1&gt;&lt;/div&gt;&lt;p&gt;&amp;nbsp;At this point, the templates are cloned, named &quot;PPM_&amp;lt;VAPP_NAME&amp;gt;_&amp;lt;NAME&amp;gt; and added to the pool &quot;PPM_&amp;lt;VAPP_NAME&amp;gt;&quot;.&amp;nbsp;&lt;/p&gt;&lt;p&gt;Additionally, a NIC is created &amp;amp; assigned to each host. This NIC only exists on the current node, and is named &quot;PPM_&amp;lt;VAPP_NAME&amp;gt;_NIC. This NIC is exclusively for the VAPP machines, and in order to enforce this + VAPP isolation, we need a firewall template to do that&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Note: The Firewall Template will need to be created by you BEFORE creating a VAPP. Any FW will work, as long as NIC1 is the WAN.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="24" width="303" height="522" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-63" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;Step1 &amp;amp; 2: User selects VM&#39;s to add to VAPP, and enters VAPP name&lt;/span&gt;&lt;/h1&gt;&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 12px; font-weight: normal;&quot;&gt;The user specified which VM&#39;s they want to add to a Vapp&lt;/span&gt;&lt;/h1&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="291" y="-126" width="348" height="162" as="geometry" />
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-67" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;fillColor=#60a917;strokeColor=#2D7600;dashed=1;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-65" target="G-ZVylhde3zBr-N8MHB2-47">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="522" y="282" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G-ZVylhde3zBr-N8MHB2-68" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;fillColor=#60a917;strokeColor=#2D7600;dashed=1;" edge="1" parent="1" source="G-ZVylhde3zBr-N8MHB2-65" target="G-ZVylhde3zBr-N8MHB2-48">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="234" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

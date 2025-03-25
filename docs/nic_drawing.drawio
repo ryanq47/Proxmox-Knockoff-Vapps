@@ -1,0 +1,93 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0" version="26.1.3">
+  <diagram name="Page-1" id="sIeLuMdUoQHU3MtgKlIc">
+    <mxGraphModel dx="1984" dy="1057" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-5" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="1" source="tGVdJ6oR1hjo6a9hlylq-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="324" y="184" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-3" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="1" source="tGVdJ6oR1hjo6a9hlylq-1" target="tGVdJ6oR1hjo6a9hlylq-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-1" value="Proxmox NIC" style="sketch=0;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#505050;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;align=center;shape=mxgraph.office.devices.nic;" vertex="1" parent="1">
+          <mxGeometry x="132" y="32" width="57" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-8" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="1" source="tGVdJ6oR1hjo6a9hlylq-6" target="tGVdJ6oR1hjo6a9hlylq-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-6" value="Host01&lt;br&gt;PPM_LAB01_NIC" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/windows_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="-204" y="153" width="41" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-20" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="1" source="tGVdJ6oR1hjo6a9hlylq-7" target="tGVdJ6oR1hjo6a9hlylq-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-7" value="Host02&lt;div&gt;PPM_LAB01_NIC&lt;/div&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/windows_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="-211" y="261" width="41" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-16" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="1" source="tGVdJ6oR1hjo6a9hlylq-17" target="tGVdJ6oR1hjo6a9hlylq-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-17" value="Host01&lt;br&gt;PPM_LAB02_NIC" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/windows_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="504" y="127" width="41" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-21" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="1" source="tGVdJ6oR1hjo6a9hlylq-19" target="tGVdJ6oR1hjo6a9hlylq-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-19" value="Host02&lt;div&gt;PPM_LAB02_NIC&lt;/div&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/windows_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="506" y="246" width="41" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-15" value="LAB02&lt;div&gt;WAN: Proxmox NIC&lt;/div&gt;&lt;div&gt;LAN: PPM_LAB02_NIC&lt;/div&gt;" style="image;html=1;image=img/lib/clip_art/networking/Firewall_02_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="294" y="177" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-2" value="LAB01&lt;div&gt;WAN: Proxmox NIC&lt;/div&gt;&lt;div&gt;LAN: PPM_LAB01_NIC&lt;/div&gt;" style="image;html=1;image=img/lib/clip_art/networking/Firewall_02_128x128.png" vertex="1" parent="1">
+          <mxGeometry x="-63" y="168" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-28" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="-28" y="496" width="402" height="227" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-29" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="tGVdJ6oR1hjo6a9hlylq-28" source="tGVdJ6oR1hjo6a9hlylq-27">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="37" y="-183" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-31" value="VAPP created with name &quot;LAB01&quot;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="tGVdJ6oR1hjo6a9hlylq-29">
+          <mxGeometry x="0.1694" y="1" relative="1" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-33" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;endArrow=classic;startFill=0;dashed=1;endFill=1;" edge="1" parent="tGVdJ6oR1hjo6a9hlylq-28">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="348" y="-174" as="targetPoint" />
+            <mxPoint x="208" y="-1" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-34" value="VAPP Created with name LAB02" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="tGVdJ6oR1hjo6a9hlylq-33">
+          <mxGeometry x="-0.1312" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-27" value="" style="rounded=0;whiteSpace=wrap;html=1;container=1;" vertex="1" parent="tGVdJ6oR1hjo6a9hlylq-28">
+          <mxGeometry width="402" height="227" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-22" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="tGVdJ6oR1hjo6a9hlylq-28" source="tGVdJ6oR1hjo6a9hlylq-23" target="tGVdJ6oR1hjo6a9hlylq-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-23" value="Host01&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/windows_server.svg;" vertex="1" parent="tGVdJ6oR1hjo6a9hlylq-28">
+          <mxGeometry x="75" y="21" width="41" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-24" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;startFill=0;" edge="1" parent="tGVdJ6oR1hjo6a9hlylq-28" source="tGVdJ6oR1hjo6a9hlylq-25" target="tGVdJ6oR1hjo6a9hlylq-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-25" value="Host02&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/windows_server.svg;" vertex="1" parent="tGVdJ6oR1hjo6a9hlylq-28">
+          <mxGeometry x="68" y="129" width="41" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tGVdJ6oR1hjo6a9hlylq-26" value="LAB - Template&lt;div&gt;WAN: Proxmox NIC&lt;/div&gt;&lt;div&gt;LAN: None&lt;/div&gt;" style="image;html=1;image=img/lib/clip_art/networking/Firewall_02_128x128.png" vertex="1" parent="tGVdJ6oR1hjo6a9hlylq-28">
+          <mxGeometry x="216" y="36" width="80" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
