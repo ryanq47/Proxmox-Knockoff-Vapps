@@ -3,6 +3,8 @@ A Pool Based, Knockoff Vapps control plane for ProxmoxVE. I got tired of not hav
 
 Note, this is not a full Vapp implementation, this is just a wrapper around the proxmox API, meant to handle these "Vapps" on one ProxmoxVE instance, using pools & some magic. 
 
+Additionally, this is meant to be PER NODE. I don't have the magic skills to make "Vapps" work accross multiple nodes, so everything is per node. There is a dropdown to switch nodes as well if you are runing a clustered enviornment
+
 ## Tool Goals:
  - Easy creation of "Vapps"
     - Select live VM's to add to a "Vapp"
@@ -30,3 +32,13 @@ Note, this is not a full Vapp implementation, this is just a wrapper around the 
 The tool listens on `0.0.0.0:8080`. 
 
 `http://127.0.0.1:8080` or `http://<your_ip>:8080`
+
+
+## Creating VAPPS:
+
+...
+
+
+#### Resources Created:
+
+NIC: `PPM_<POOLNAME>_NIC`: The NIC created for the VAPP

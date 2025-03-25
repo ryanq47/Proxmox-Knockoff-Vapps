@@ -141,3 +141,55 @@ def get_vm_name(vmid):
                 return (
                     proxmox.nodes(node_name).qemu(vmid).config.get().get("name", None)
                 )
+
+
+def get_all_vms(node_name):
+    """
+    Gets VM details, general call to /nodes/<node>/qemu
+
+    """
+    proxmox = get_proxmox_class()
+    vm_list_of_dicts = proxmox.nodes(node_name).qemu.get()
+    # print(vms)
+    return vm_list_of_dicts
+
+
+def get_all_node_names():
+    """
+    Gets all node names in the proxmox cluster
+    """
+    proxmox = get_proxmox_class()
+
+    node_name_list = []
+    for node in proxmox.nodes.get():
+        # toss name into list
+        node_name_list.append(node.get("node"))
+
+    return node_name_list
+
+
+def create_nic(iface_name, node, type="bridge"):
+    """
+    Creates a NIC
+    """
+    proxmox = get_proxmox_class()
+    try:
+
+        for _node in proxmox.nodes.get():
+            print(_node)
+            node_name = _node["node"]
+            if node == node_name:
+                # create nic
+                ui.notify(
+                    f"Creating NIC: Node: {node}, interface name:{iface_name} Type:{type} ",
+                    position="top-right",
+                )
+                proxmox.nodes(node).network.post(iface=iface_name, node=node, type=type)
+                ui.notify(
+                    f"NIC {iface_name} created successfully on {node}",
+                    position="top-right",
+                )
+
+            # vm_list_of_dicts = proxmox.nodes(node_name).qemu.get()
+    except Exception as e:
+        ui.notify(f"Error creating NIC: {e}", position="top-right", type="warning")
