@@ -4,6 +4,8 @@ import yarl
 from utils import *
 from functools import partial
 
+# Ryan todo: Move calls to take a node name. instead of iterating
+
 
 class VappPage:
     def __init__(self):
