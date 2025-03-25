@@ -6,162 +6,49 @@ from functools import partial
 
 
 class VappPage:
-    def __init__(self): ...
+    def __init__(self):
+        self.currently_selected_node = None
 
     def render(self):
         with ui.row().classes("w-full justify-between items-center mt-4"):
             ui.markdown("# Proxmox Pools Manager")
             node_list = get_all_node_names()
-            node_selector = ui.select(node_list).classes("w-full flex-1")
-            self.currently_selected_node = node_selector.value
+            self.currently_selected_node = ui.select(
+                node_list,
+                on_change=self.on_node_changed,
+                # value=node_list[0],  # default first node
+            ).classes("w-full flex-1")
             ui.button("Logout", on_click=lambda: ui.navigate.to("/logout"))
-        ui.separator()
 
-        with ui.expansion(
-            "Create Vapp",
-            icon="work",
-            caption="Create a Vapp from current VM's",
-        ).classes("w-full"):
-            vcw = VappCreatorView(node_name=self.currently_selected_node)
+        # Vapp Creator section (node dependent)
+        self.vapp_creator_container = ui.column().classes("w-full")
+        with self.vapp_creator_container:
+            vcw = VappCreatorView(node_name=self.currently_selected_node.value)
             vcw.render()
 
-        ui.separator()
+        # Templates section using the TemplatesView class
 
-        with ui.expansion(
-            "Templates",
-            icon="work",
-            caption="Templates that can be tunred into active Pools",
-        ).classes("w-full"):
-            self.render_templates()
+        self.templates_container = ui.column().classes("w-full")
+        with self.templates_container:
+            TemplatesView().render()
 
-        ui.separator()
+        # Active Pools section using the ActivePoolsView class
 
-        with ui.expansion(
-            "Active Pools",
-            icon="work",
-            caption="Active pools/Labs that have been cloned",
-        ).classes("w-full"):
-            self.render_active_pools()
+        self.active_pools_container = ui.column().classes("w-full")
+        with self.active_pools_container:
+            ActivePoolsView().render()
 
-    def render_templates(self):
-        try:
-            # note, this is not final. maybe have some tempalte cards, then a list of
-            # current vapps
-            ui.markdown("## Templates")
+    def on_node_changed(self):
+        # Update node-dependent sections without duplicating the expansion blocks.
+        self.vapp_creator_container.clear()
+        vcw = VappCreatorView(node_name=self.currently_selected_node.value)
+        vcw.render()
 
-            for i in range(1, 3):
-                with ui.card().classes("w-full border"):
-                    with ui.row().classes(
-                        "w-full justify-between items-center mt-4 flex-1"
-                    ):
-                        ui.input("Pool Name").classes("flex-1")
-                        ui.checkbox("Start Pool post clone").classes("flex-1")
+        self.templates_container.clear()
+        TemplatesView().render()
 
-                        ui.button("Clone").classes("flex-1")
-
-            proxmox_class = get_proxmox_class()
-
-            # for node in proxmox_class.nodes.get():
-            #     # print(node)
-            #     for vm in proxmox_class.nodes(node["node"]).qemu.get():
-            #         ui.label(f"{vm['vmid']}. {vm['name']} => {vm['status']}")
-
-            # ui.markdown("## Templates")
-
-            # for pool in proxmox_class.pools.get():
-            #     with ui.card().classes("w-full") as card:
-            #         ui.markdown(f'### {pool.get("poolid")}')
-            #         ui.label(pool.get("comment"))
-
-            #         # Flex container for buttons spread out evenly
-            #         with ui.row().classes(
-            #             "w-full justify-between items-center mt-4 flex-1"
-            #         ):
-            #             ui.button("Start").classes("w-full flex-1")
-            #             ui.button("Stop").classes("w-full flex-1")
-            #             ui.button("Restart").classes("w-full flex-1")
-            #             ui.button("Delete").classes("w-full flex-1")
-            #             select1 = ui.select(
-            #                 ["snapshot1", "snapshot2", "snapshot3"], value="snapshot1"
-            #             ).classes("border")
-            #             ui.button("< Revert to snapshot").classes("w-full flex-1")
-
-        except Exception as e:
-            print(e)
-            ui.notify(f"Error occured: {e}", position="top-right", type="warning")
-
-    def render_active_pools(self):
-        try:
-            # note, this is not final. maybe have some tempalte cards, then a list of
-            # current vapps
-            # for i in range(1, 3):
-            #     with ui.card().classes("w-full"):
-            #         ui.button("Start")
-            #         ui.button("Stop")
-            #         ui.button("Clone")
-
-            proxmox_class = get_proxmox_class()
-
-            # for node in proxmox_class.nodes.get():
-            #     # print(node)
-            #     for vm in proxmox_class.nodes(node["node"]).qemu.get():
-            #         ui.label(f"{vm['vmid']}. {vm['name']} => {vm['status']}")
-
-            ui.markdown("## Active Vapps")
-
-            for pool in proxmox_class.pools.get():
-                pool_name = pool.get("poolid")
-                vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
-                with ui.card().classes("w-full border") as card:
-                    ui.markdown(f"### {pool_name}")
-                    ui.label(pool.get("comment"))
-
-                    # Flex container for buttons spread out evenly
-                    with ui.row().classes(
-                        "w-full justify-between items-center mt-4 flex-1"
-                    ):
-                        # stop_all_vms_in_pool
-                        ui.button(
-                            "Start", on_click=partial(get_all_vms_in_pool, pool_name)
-                        ).classes("w-full flex-1")
-                        ui.button("Stop").classes("w-full flex-1")
-                        # restart_all_vms_in_pool
-                        ui.button("Restart").classes("w-full flex-1")
-                        # delete_all_resources_in_pool (nic, VM's, etc)
-                        ui.button("Delete").classes("w-full flex-1")
-                        select1 = ui.select(
-                            ["snapshot1", "snapshot2", "snapshot3"], value="snapshot1"
-                        ).classes("border")
-                        ui.button("< Revert to snapshot").classes("w-full flex-1")
-
-                        ui.separator()
-
-                        with ui.expansion("VM's in pool:").classes("w-full"):
-                            for vmid in vm_ids_in_pool:
-                                with ui.row().classes(
-                                    "w-full justify-between items-center mt-4 "
-                                ):
-                                    ui.label(get_vm_name(vmid))
-                                    ui.button("Start", on_click=partial(start_vm, vmid))
-                                    ui.button("Stop", on_click=partial(stop_vm, vmid))
-                                    ui.button(
-                                        "Restart", on_click=partial(restart_vm, vmid)
-                                    )
-                                    ui.separator()
-        except Exception as e:
-            print(e)
-            ui.notify(f"Error occured: {e}", position="top-right", type="warning")
-
-    def start_all_vms_in_pool(self, vm_ids):
-        """
-
-        Starts all VM's in pool
-        """
-
-        """
-            for vm in vm_pool:
-                start_vm(vm.vmid)
-        """
+        self.active_pools_container.clear()
+        ActivePoolsView().render()
 
 
 class VappCreatorView:
@@ -169,8 +56,10 @@ class VappCreatorView:
         self.node_name = node_name
 
     def render(self):
-        ui.label("vapp creator")
-        self.create_stepper()
+        with ui.expansion("Vapp Creator", icon="work", caption="Create Vapps").classes(
+            "w-full"
+        ):
+            self.create_stepper()
 
     def create_stepper(self):
         proxmox_class = get_proxmox_class()
@@ -297,3 +186,82 @@ class VappCreatorView:
 
         # Clone hosts
         # for i in hosts, clone
+
+
+class TemplatesView:
+    def __init__(self):
+        # Any initialization you need can go here
+        pass
+
+    def render(self):
+        try:
+            with ui.expansion("Templates", icon="work", caption="Templates...").classes(
+                "w-full"
+            ):
+                ui.markdown("## Templates")
+                for i in range(1, 3):
+                    with ui.card().classes("w-full border"):
+                        with ui.row().classes(
+                            "w-full justify-between items-center mt-4 flex-1"
+                        ):
+                            ui.input("Pool Name").classes("flex-1")
+                            ui.checkbox("Start Pool post clone").classes("flex-1")
+                            ui.button("Clone").classes("flex-1")
+            # ui.separator()
+
+        except Exception as e:
+            print(e)
+            ui.notify(f"Error occurred: {e}", position="top-right", type="warning")
+
+
+class ActivePoolsView:
+    def __init__(self):
+        # Any initialization you need can go here
+        pass
+
+    def render(self):
+        try:
+            with ui.expansion(
+                "Active Pools", icon="work", caption="Active pools/Labs...", value=True
+            ).classes("w-full"):
+                proxmox_class = get_proxmox_class()
+                ui.markdown("## Active Vapps")
+                for pool in proxmox_class.pools.get():
+                    pool_name = pool.get("poolid")
+                    vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
+                    with ui.card().classes("w-full border"):
+                        ui.markdown(f"### {pool_name}")
+                        ui.label(pool.get("comment"))
+                        with ui.row().classes(
+                            "w-full justify-between items-center mt-4 flex-1"
+                        ):
+                            ui.button(
+                                "Start",
+                                on_click=partial(get_all_vms_in_pool, pool_name),
+                            ).classes("w-full flex-1")
+                            ui.button("Stop").classes("w-full flex-1")
+                            ui.button("Restart").classes("w-full flex-1")
+                            ui.button("Delete").classes("w-full flex-1")
+                            select1 = ui.select(
+                                ["snapshot1", "snapshot2", "snapshot3"],
+                                value="snapshot1",
+                            ).classes("border")
+                            ui.button("< Revert to snapshot").classes("w-full flex-1")
+                        ui.separator()
+                        with ui.expansion("VM's in pool:").classes("w-full"):
+                            for vmid in vm_ids_in_pool:
+                                with ui.row().classes(
+                                    "w-full justify-between items-center mt-4"
+                                ):
+                                    ui.label(get_vm_name(vmid))
+                                    ui.button("Start", on_click=partial(start_vm, vmid))
+                                    ui.button("Stop", on_click=partial(stop_vm, vmid))
+                                    ui.button(
+                                        "Restart", on_click=partial(restart_vm, vmid)
+                                    )
+                                    ui.separator()
+            # ui.separator()
+
+        except Exception as e:
+            print(e)
+            ui.notify(f"Error occurred: {e}", position="top-right", type="warning")
