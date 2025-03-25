@@ -42,3 +42,11 @@ The tool listens on `0.0.0.0:8080`.
 #### Resources Created:
 
 NIC: `PPM_<POOLNAME>_NIC`: The NIC created for the VAPP
+
+
+#### Reccomended:
+
+Ideally, each Vapp would have the follwoing:
+ - A FireWall Template (WAN: NIC on said proxmox node, LAN: NIC Created for Vapp)
+ 
+ This allows for multiple labs to exist on one NIC, and is the easiest way to get this rolling. 
