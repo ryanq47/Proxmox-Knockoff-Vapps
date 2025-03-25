@@ -1,7 +1,8 @@
 from nicegui import app, ui
 import requests
 import yarl
-from utils import get_proxmox_class
+from utils import *
+from functools import partial
 
 
 class VappPage:
@@ -96,15 +97,19 @@ class VappPage:
             ui.markdown("## Active Vapps")
 
             for pool in proxmox_class.pools.get():
+                pool_name = pool.get("poolid")
+                vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
                 with ui.card().classes("w-full border") as card:
-                    ui.markdown(f'### {pool.get("poolid")}')
+                    ui.markdown(f"### {pool_name}")
                     ui.label(pool.get("comment"))
 
                     # Flex container for buttons spread out evenly
                     with ui.row().classes(
                         "w-full justify-between items-center mt-4 flex-1"
                     ):
-                        ui.button("Start").classes("w-full flex-1")
+                        ui.button(
+                            "Start", on_click=partial(get_all_vms_in_pool, pool_name)
+                        ).classes("w-full flex-1")
                         ui.button("Stop").classes("w-full flex-1")
                         ui.button("Restart").classes("w-full flex-1")
                         ui.button("Delete").classes("w-full flex-1")
@@ -116,14 +121,25 @@ class VappPage:
                         ui.separator()
 
                         with ui.expansion("VM's in pool:").classes("w-full"):
-                            for i in range(1, 3):
+                            for vmid in vm_ids_in_pool:
                                 with ui.row().classes(
                                     "w-full justify-between items-center mt-4 "
                                 ):
-                                    ui.label(f"VM_{i}")
-                                    ui.button("Start")
-                                    ui.button("stop")
+                                    ui.label(get_vm_name(vmid))
+                                    ui.button("Start")  # start_vm(vmid) - use partial
+                                    ui.button("stop")  # stop_vm(vmid)
                                     ui.separator()
         except Exception as e:
             print(e)
             ui.notify(f"Error occured: {e}", position="top-right", type="warning")
+
+    def start_all_vms_in_pool(self, vm_ids):
+        """
+
+        Starts all VM's in pool
+        """
+
+        """
+            for vm in vm_pool:
+                start_vm(vm.vmid)
+        """
