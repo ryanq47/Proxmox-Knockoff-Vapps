@@ -15,6 +15,16 @@ class VappPage:
         ui.separator()
 
         with ui.expansion(
+            "Create Vapp",
+            icon="work",
+            caption="Create a Vapp from current VM's",
+        ).classes("w-full"):
+            vcw = VappCreatorView()
+            vcw.render()
+
+        ui.separator()
+
+        with ui.expansion(
             "Templates",
             icon="work",
             caption="Templates that can be tunred into active Pools",
@@ -142,4 +152,53 @@ class VappPage:
         """
             for vm in vm_pool:
                 start_vm(vm.vmid)
+        """
+
+
+class VappCreatorView:
+    def __init__(self): ...
+
+    def render(self):
+        ui.label("vapp creator")
+        self.create_aggrid()
+
+    def create_aggrid(self):
+        self.vm_table = ui.aggrid(
+            {
+                "columnDefs": [
+                    {
+                        "headerName": "UUID",
+                        "field": "uuid",
+                        "filter": "agTextColumnFilter",
+                        "floatingFilter": True,
+                    },
+                    {
+                        "headerName": "VM Name",
+                        "field": "username",
+                        "filter": "agTextColumnFilter",
+                        "floatingFilter": True,
+                    },
+                ],
+                "rowData": [],
+                "enableCellTextSelection": True,  # allows selecting data
+                "rowSelection": "multiple",
+            }
+        ).classes(f"w-full")
+
+        ui.separator()
+
+        with ui.row().classes("w-full justify-between items-center mt-4 flex-1"):
+            # ui.label(get_vm_name(vmid))
+            ui.input("Template Name").classes("w-full flex-1")
+            ui.button("Create Template from Selected VM's").classes("w-full flex-1")
+            ui.separator()
+
+    def _create_template(self):
+        """
+        Creates template(s) for live vm
+
+        1. Clone VM
+        2. Template said clone
+        3.
+
         """
