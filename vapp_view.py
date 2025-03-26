@@ -18,7 +18,7 @@ class VappPage:
             self.currently_selected_node = ui.select(
                 node_list,
                 on_change=self.on_node_changed,
-                # value=node_list[0],  # default first node
+                value=node_list[0],  # default first node
             ).classes("w-full flex-1")
             ui.button("Logout", on_click=lambda: ui.navigate.to("/logout"))
 
@@ -32,13 +32,13 @@ class VappPage:
 
         self.templates_container = ui.column().classes("w-full")
         with self.templates_container:
-            TemplatesView().render()
+            TemplatesView(node_name=self.currently_selected_node.value).render()
 
         # Active Pools section using the ActivePoolsView class
 
         self.active_pools_container = ui.column().classes("w-full")
         with self.active_pools_container:
-            ActivePoolsView().render()
+            ActivePoolsView(self.currently_selected_node.value).render()
 
     def on_node_changed(self):
         # Update node-dependent sections without duplicating the expansion blocks.
@@ -47,7 +47,7 @@ class VappPage:
         vcw.render()
 
         self.templates_container.clear()
-        TemplatesView().render()
+        TemplatesView(node_name=self.currently_selected_node.value).render()
 
         self.active_pools_container.clear()
         ActivePoolsView().render()
@@ -69,7 +69,7 @@ class VappCreatorView:
 
         with ui.stepper().props("vertical").classes("w-full") as stepper:
             # print(raw_vm_data)
-            with ui.step("Select VM's"):
+            with ui.step("[Optional] Select VM's to include in template"):
                 self.vm_table = ui.aggrid(
                     {
                         "columnDefs": [
@@ -143,7 +143,6 @@ class VappCreatorView:
             #             ui.button("Back", on_click=stepper.previous)
 
             with ui.step("Create Vapp/Pool"):
-                ui.checkbox("start VAPP/Pool on creation")
                 ui.button(
                     "Create Template from Selected VM's", on_click=self._create_template
                 ).classes("w-full flex-1")
@@ -201,7 +200,7 @@ class VappCreatorView:
 
             for vm_id in vm_ids:
                 # print("Starting clone process")
-                init_vmid = 700
+                init_vmid = get_next_available_vmid()
                 new_vm_ids.append(init_vmid)
                 clone_host(
                     node=self.node_name, new_id=init_vmid, vmid_of_host_to_clone=vm_id
@@ -243,9 +242,9 @@ class VappCreatorView:
 
 
 class TemplatesView:
-    def __init__(self):
+    def __init__(self, node_name):
         # Any initialization you need can go here
-        pass
+        self.node_name = node_name
 
     def render(self):
         try:
@@ -253,21 +252,34 @@ class TemplatesView:
                 "w-full"
             ):
                 ui.markdown("## Templates")
-                for i in range(1, 3):
+                # for i in range(1, 3):
+
+                valid_template_pool_list = get_valid_templates()
+
+                for template_pool_name in valid_template_pool_list:
+                    print(template_pool_name)
                     with ui.card().classes("w-full border"):
+                        ui.label(template_pool_name)
                         with ui.row().classes(
                             "w-full justify-between items-center mt-4 flex-1"
                         ):
-                            ui.input("Pool Name").classes("flex-1")
+                            vapp_name_input = ui.input("New VAPP Name").classes(
+                                "flex-1"
+                            )
                             ui.checkbox("Start Pool post clone").classes("flex-1")
-                            ui.button("Clone").classes("flex-1")
+                            ui.button(
+                                "Clone",
+                                on_click=lambda tpn=template_pool_name, inp=vapp_name_input: self.create_vapp_from_template(
+                                    tpn, inp.value
+                                ),
+                            ).classes("flex-1")
             # ui.separator()
 
         except Exception as e:
             # print(e)
             ui.notify(f"Error occurred: {e}", position="top-right", type="warning")
 
-    def clone_vms(self):
+    def create_vapp_from_template(self, template_pool_name, new_pool_name):
         """
         Does a few things:
 
@@ -277,11 +289,47 @@ class TemplatesView:
         4. Starts the VM's in that pool
         """
 
+        logger.info(
+            f"Creating VAPP from template pool '{template_pool_name}' into new pool '{new_pool_name}'"
+        )
+
+        # 1. Get all VM's in template pool
+        vms_in_template_pool = get_all_vms_in_pool(template_pool_name)
+        logger.info(
+            f"Found {len(vms_in_template_pool)} VM(s) in template pool '{template_pool_name}'"
+        )
+
+        # 2. Create new pool with new pool name
+        create_pool(poolid=new_pool_name)
+        logger.info(f"Created new pool '{new_pool_name}'")
+
+        # .2. Clone all VM's - thinclone
+        for vm_id in vms_in_template_pool:
+            new_vmid = get_next_available_vmid()
+            logger.info(f"Cloning VM {vm_id} into new VM {new_vmid}")
+            clone_host(
+                new_id=new_vmid, vmid_of_host_to_clone=vm_id, node=self.node_name
+            )
+
+            logger.info(f"Waiting for VM {new_vmid} to unlock")
+            wait_for_unlock(vmid=new_vmid, node=self.node_name)
+
+            logger.info(f"Adding cloned VM {new_vmid} to pool '{template_pool_name}'")
+            add_host_to_pool(
+                poolid=new_pool_name,
+                vmid=new_vmid,
+            )
+
+            # add_existing_bridge_to_vm(
+            #     vmid=new_vmid, node=self.node_name, bridge_name=f"{new_pool_name}_NIC"
+            # )
+
+            new_vmid += 1
+
 
 class ActivePoolsView:
-    def __init__(self):
-        # Any initialization you need can go here
-        pass
+    def __init__(self, node_name):
+        self.node_name = node_name
 
     def render(self):
         try:
@@ -290,27 +338,54 @@ class ActivePoolsView:
             ).classes("w-full"):
                 proxmox_class = get_proxmox_class()
                 ui.markdown("## Active Vapps")
-                for pool in proxmox_class.pools.get():
+                for pool in get_vapps():
                     pool_name = pool.get("poolid")
                     vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
                     with ui.card().classes("w-full border"):
                         ui.markdown(f"### {pool_name}")
                         ui.label(pool.get("comment"))
+                        ui.label("WAN ip: someip")
                         with ui.row().classes(
                             "w-full justify-between items-center mt-4 flex-1"
                         ):
                             ui.button(
                                 "Start",
-                                on_click=partial(get_all_vms_in_pool, pool_name),
+                                on_click=partial(
+                                    start_multiple_vms,
+                                    vmid_list=vm_ids_in_pool,
+                                    node=self.node_name,
+                                ),
                             ).classes("w-full flex-1")
-                            ui.button("Stop").classes("w-full flex-1")
-                            ui.button("Restart").classes("w-full flex-1")
-                            ui.button("Delete").classes("w-full flex-1")
-                            select1 = ui.select(
-                                ["snapshot1", "snapshot2", "snapshot3"],
-                                value="snapshot1",
-                            ).classes("border")
-                            ui.button("< Revert to snapshot").classes("w-full flex-1")
+                            ui.button(
+                                "Stop",
+                                on_click=partial(
+                                    stop_multiple_vms,
+                                    vmid_list=vm_ids_in_pool,
+                                    node=self.node_name,
+                                ),
+                            ).classes("w-full flex-1")
+                            ui.button(
+                                "Restart",
+                                on_click=partial(
+                                    restart_multiple_vms,
+                                    vmid_list=vm_ids_in_pool,
+                                    node=self.node_name,
+                                ),
+                            ).classes("w-full flex-1")
+                            ui.button(
+                                "Delete VAPP",
+                                on_click=partial(
+                                    delete_vapp,
+                                    vmid_list=vm_ids_in_pool,
+                                    node=self.node_name,
+                                ),
+                            ).classes("w-full flex-1")
+                            # I don't wanna deal with this rn so no snapshots atm
+                            # select1 = ui.select(
+                            #     ["snapshot1", "snapshot2", "snapshot3"],
+                            #     value="snapshot1",
+                            # ).classes("border")
+                            # ui.button("< Revert to snapshot").classes("w-full flex-1")
                         ui.separator()
                         with ui.expansion("VM's in pool:").classes("w-full"):
                             for vmid in vm_ids_in_pool:
@@ -318,10 +393,24 @@ class ActivePoolsView:
                                     "w-full justify-between items-center mt-4"
                                 ):
                                     ui.label(get_vm_name(vmid))
-                                    ui.button("Start", on_click=partial(start_vm, vmid))
-                                    ui.button("Stop", on_click=partial(stop_vm, vmid))
+                                    ui.label(
+                                        f"Status: {get_vm_status(vmid, self.node_name)}"
+                                    )
                                     ui.button(
-                                        "Restart", on_click=partial(restart_vm, vmid)
+                                        "Start",
+                                        on_click=partial(
+                                            start_vm, vmid, self.node_name
+                                        ),
+                                    )
+                                    ui.button(
+                                        "Stop",
+                                        on_click=partial(stop_vm, vmid, self.node_name),
+                                    )
+                                    ui.button(
+                                        "Restart",
+                                        on_click=partial(
+                                            restart_vm, vmid, self.node_name
+                                        ),
                                     )
                                     ui.separator()
             # ui.separator()

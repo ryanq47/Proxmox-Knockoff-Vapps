@@ -33,52 +33,129 @@ def get_templates():
     logger.info("get_templates() called (not yet implemented)")
 
 
-def start_vm(vmid):
+def start_multiple_vms(vmid_list, node):
+    for vmid in vmid_list:
+        start_vm(vmid, node)
+
+
+def stop_multiple_vms(vmid_list, node):
+    for vmid in vmid_list:
+        stop_vm(vmid, node)
+
+
+def restart_multiple_vms(vmid_list, node):
+    for vmid in vmid_list:
+        restart_vm(vmid, node)
+
+
+def delete_vapp(vmid_list, node):
+    """
+    Deletes VAPP
+
+    Deletes the following specifically, in this order
+
+    1. VM's in Pool
+    2. NIC in Pool
+    3. Pool itself
+
+    """
+    logger.debug("Attmepting to delete VAPP")
+
+    for vmid in vmid_list:
+        delete_vm(vmid, node)
+
+    # delete NIC
+
+    # delete pool
+
+
+def delete_vm(vmid, node):
+    """
+    Force stop and delete a VM.
+    """
+    logger.info(f"Attempting to delete VM {vmid} on node {node}")
+
+    proxmox = get_proxmox_class()
+
+    try:
+        status = proxmox.nodes(node).qemu(vmid).status.current.get()
+        if status.get("status") == "running":
+            logger.info(f"VM {vmid} is running. Sending stop command...")
+            proxmox.nodes(node).qemu(vmid).status.stop.post()
+            logger.info(
+                f"Sent stop signal to VM {vmid}, waiting for it to power off..."
+            )
+
+            # Wait until VM is off
+            import time
+
+            for _ in range(30):  # wait up to ~30s
+                time.sleep(1)
+                new_status = proxmox.nodes(node).qemu(vmid).status.current.get()
+                if new_status.get("status") != "running":
+                    break
+            else:
+                logger.warning(f"VM {vmid} did not shut down in time.")
+
+        logger.info(f"Deleting VM {vmid}")
+        proxmox.nodes(node).qemu(vmid).delete()
+        logger.info(f"VM {vmid} deleted successfully")
+
+    except Exception as e:
+        logger.error(f"Error deleting VM {vmid}: {e}")
+
+
+def start_vm(vmid, node):
     logger.info(f"Attempting to start VM {vmid}")
     proxmox = get_proxmox_class()
-    for node in proxmox.nodes.get():
-        node_name = node["node"]
-        vms = proxmox.nodes(node_name).qemu.get()
-        for vm in vms:
-            if vm["vmid"] == vmid:
-                ui.notify(f"Starting VM {vmid}", position="top-right")
-                logger.info(f"Starting VM {vmid} on node {node_name}")
-                return proxmox.nodes(node_name).qemu(vmid).status.start.post()
-    logger.error(f"VM with vmid {vmid} not found")
-    raise ValueError(f"VM with vmid {vmid} not found")
+
+    ui.notify(f"Starting VM {vmid}", position="top-right")
+    logger.info(f"Starting VM {vmid} on node {node}")
+    return proxmox.nodes(node).qemu(vmid).status.start.post()
 
 
-def stop_vm(vmid):
+def stop_vm(vmid, node):
     logger.info(f"Attempting to stop VM {vmid}")
     proxmox = get_proxmox_class()
-    for node in proxmox.nodes.get():
-        node_name = node["node"]
-        vms = proxmox.nodes(node_name).qemu.get()
-        for vm in vms:
-            if vm["vmid"] == vmid:
-                ui.notify(f"Stopping VM {vmid}", position="top-right")
-                logger.info(f"Stopping VM {vmid} on node {node_name}")
-                return proxmox.nodes(node_name).qemu(vmid).status.shutdown.post()
-    logger.error(f"VM with vmid {vmid} not found")
-    raise ValueError(f"VM with vmid {vmid} not found")
+
+    ui.notify(f"Stopping VM {vmid}", position="top-right")
+    logger.info(f"Stopping VM {vmid} on node {node}")
+    return proxmox.nodes(node).qemu(vmid).status.shutdown.post()
 
 
-def restart_vm(vmid):
+def restart_vm(vmid, node):
     logger.info(f"Attempting to restart VM {vmid}")
     proxmox = get_proxmox_class()
-    for node in proxmox.nodes.get():
-        node_name = node["node"]
-        vms = proxmox.nodes(node_name).qemu.get()
-        for vm in vms:
-            if vm["vmid"] == vmid:
-                ui.notify(f"Restarting VM {vmid}", position="top-right")
-                logger.info(f"Restarting VM {vmid} on node {node_name}")
-                return proxmox.nodes(node_name).qemu(vmid).status.reset.post()
-    logger.error(f"VM with vmid {vmid} not found")
-    raise ValueError(f"VM with vmid {vmid} not found")
+
+    ui.notify(f"Restart VM {vmid}", position="top-right")
+    logger.info(f"Restart VM {vmid} on node {node}")
+    return proxmox.nodes(node).qemu(vmid).status.reboot.post()
+
+
+def get_vm_status(vmid, node):
+    """
+    Returns the status of a VM as a string.
+
+    Example return: "running", "stopped", etc.
+    """
+    logger.info(f"Getting status for VM {vmid} on node {node}")
+    proxmox = get_proxmox_class()
+
+    try:
+        status = proxmox.nodes(node).qemu(vmid).status.current.get()
+        state = status.get("status", "unknown")
+        logger.info(f"VM {vmid} status is '{state}'")
+        return state
+    except Exception as e:
+        logger.error(f"Failed to get status for VM {vmid}: {e}")
+        return "error"
 
 
 def get_all_vms_in_pool(pool_name) -> list:
+    """
+    Returns list of VM id's
+
+    """
     logger.info(f"Getting all VMs in pool '{pool_name}'")
     vm_id_list = []
     proxmox = get_proxmox_class()
@@ -163,6 +240,44 @@ def create_nic(iface_name, node, type="bridge"):
         ui.notify(f"Error creating NIC: {e}", position="top-right", type="warning")
 
 
+def add_existing_bridge_to_vm(vmid, node, bridge_name, model="virtio"):
+    """
+    Attaches an existing Proxmox bridge to a VM as a new NIC.
+
+    Args:
+        vmid (int): ID of the VM
+        node (str): Node name
+        bridge_name (str): Name of the existing bridge (e.g., "PPM_SOMENAME_NIC")
+        model (str): NIC model (default: virtio)
+    """
+    logger.info(f"Attaching bridge '{bridge_name}' to VM {vmid} on node {node}")
+    proxmox = get_proxmox_class()
+
+    try:
+        # Determine next available NIC slot (net0, net1, ...)
+        config = proxmox.nodes(node).qemu(vmid).config.get()
+        nic_index = 0
+        while f"net{nic_index}" in config:
+            nic_index += 1
+
+        nic_key = f"net{nic_index}"
+        nic_value = f"{model}=bridge={bridge_name}"  # Let Proxmox generate MAC
+
+        proxmox.nodes(node).qemu(vmid).config.post(**{nic_key: nic_value})
+
+        logger.info(
+            f"Successfully added '{nic_key}' with bridge '{bridge_name}' to VM {vmid}"
+        )
+        ui.notify(
+            f"NIC {nic_key} connected to '{bridge_name}' added to VM {vmid}",
+            position="top-right",
+        )
+
+    except Exception as e:
+        logger.error(f"Error attaching bridge '{bridge_name}' to VM {vmid}: {e}")
+        ui.notify(f"Error adding NIC: {e}", position="top-right", type="warning")
+
+
 def create_pool(poolid: str):
     logger.info(f"Attempting to create pool '{poolid}'")
     proxmox = get_proxmox_class()
@@ -234,3 +349,67 @@ def wait_for_unlock(vmid, node, timeout=60):
 
     logger.error(f"Timeout: VM {vmid} is still locked after {timeout} seconds")
     raise TimeoutError(f"VM {vmid} is still locked after {timeout} seconds.")
+
+
+def get_valid_templates() -> list:
+    """
+    Gets all pools in the node, then filters by "PPM_TEMPLATE_"
+
+
+    reutrns list of valid pool ID's
+    """
+    logger.info(f"Getting valid vapp templates")
+    proxmox = get_proxmox_class()
+    pools = proxmox.pools.get()
+
+    pool_id_list = []
+
+    for pool in pools:
+        print(pool)
+        pool_name = pool.get("poolid")
+        if "PPM_TEMPLATE" in pool_name:
+            pool_id_list.append(pool_name)
+
+    return pool_id_list
+
+
+def get_vapps() -> list:
+    """
+    Gets all the VAPPS, excludes the templates such as "PPM_TEMPLATE"
+
+    reutrns list of pool data
+    {poolid:something, sometingelse:?}
+    """
+    logger.info(f"Getting valid vapp templates")
+    proxmox = get_proxmox_class()
+    pools = proxmox.pools.get()
+
+    pool_list = []
+
+    for pool in pools:
+        print(pool)
+        pool_name = pool.get("poolid")
+        if not "PPM_TEMPLATE" in pool_name:
+            pool_list.append(pool)
+
+    return pool_list
+
+
+def get_next_available_vmid(minimum=1000):
+    proxmox = get_proxmox_class()
+    nextid = int(proxmox.cluster.nextid.get())
+    if nextid >= minimum:
+        return nextid
+
+    # fallback: find next available >= minimum
+    used_ids = set()
+    for node in proxmox.nodes.get():
+        node_name = node["node"]
+        for vm in proxmox.nodes(node_name).qemu.get():
+            used_ids.add(int(vm["vmid"]))
+
+    candidate = minimum
+    while candidate in used_ids:
+        candidate += 1
+
+    return candidate

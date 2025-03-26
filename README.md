@@ -6,7 +6,7 @@ Note, this is not a full Vapp implementation, this is just a wrapper around the 
 Additionally, this is meant to be PER NODE. I don't have the magic skills to make "Vapps" work accross multiple nodes, so everything is per node. There is a dropdown to switch nodes as well if you are runing a clustered enviornment
 
 ## Tool Goals:
- - Easy creation of "Vapps"
+ - Easy creation of "Vapps"/VApp templates
     - Select live VM's to add to a "Vapp"
 
  - Easy Management of "Vapps"
@@ -36,7 +36,37 @@ The tool listens on `0.0.0.0:8080`.
 
 ## Creating VAPPS:
 
-...
+### Creating a new VAPP Tempalte:
+
+If you want to make a new tempalte, ex for a new purpose, follow these steps
+
+Step 1: Create a VAPP Template
+
+Click "Vapp Creator"
+
+1. Optionally, include any pre-existing VM's you want in your VAPP template.
+
+2. Add in the template name
+
+3. click "Create Template" 
+
+4. Start configuring machines to add to your template. Once done, add them to the pool with the name of the vapp template. 
+
+Ex: Add a `kali` box, a firewall, and a Windows DC. Add the created `PPM_<VAPP_NAME>_NIC` NIC to these machines.  
+
+5. Create an instance of the VAPP in the `Templates` section, by entering a name for the VAPP, and hitting `Clone`
+
+On refresh, the VAPP instance should show up in the "Active VAPPs" section
+
+
+### Spawning a new VAPP:
+
+If you already have a VAPP template, follow these steps to spawn a new instance of it.
+
+1. Create an instance of the VAPP in the `Templates` section, by entering a name for the VAPP, and hitting `Clone`
+
+On refresh, the VAPP instance should show up in the "Active VAPPs" section
+
 
 
 #### Resources Created:
