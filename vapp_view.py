@@ -347,87 +347,184 @@ class ActivePoolsView:
             ).classes("w-full"):
                 proxmox_class = get_proxmox_class()
                 ui.markdown("## Active Vapps")
-                # for each pool/VAPP... do this
-                for pool in get_vapps():
-                    pool_name = pool.get("poolid")
-                    vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
-                    with ui.card().classes("w-full border"):
-                        ui.markdown(
-                            f"### {pool_name.replace("_","\_")}"
-                        )  # add in delim for _
-                        ui.label(pool.get("comment"))
-                        ui.label("WAN ip: someip")
-                        with ui.row().classes(
-                            "w-full justify-between items-center mt-4 flex-1"
-                        ):
-                            ui.button(
-                                "Start",
-                                on_click=partial(
-                                    start_multiple_vms,
-                                    vmid_list=vm_ids_in_pool,
-                                    node=self.node_name,
-                                ),
-                            ).classes("w-full flex-1")
-                            ui.button(
-                                "Stop",
-                                on_click=partial(
-                                    stop_multiple_vms,
-                                    vmid_list=vm_ids_in_pool,
-                                    node=self.node_name,
-                                ),
-                            ).classes("w-full flex-1")
-                            ui.button(
-                                "Restart",
-                                on_click=partial(
-                                    restart_multiple_vms,
-                                    vmid_list=vm_ids_in_pool,
-                                    node=self.node_name,
-                                ),
-                            ).classes("w-full flex-1")
-                            ui.button(
-                                "Delete VAPP",
-                                on_click=partial(
-                                    delete_vapp,
-                                    vmid_list=vm_ids_in_pool,
-                                    node=self.node_name,
-                                    pool_name=pool_name,
-                                ),
-                            ).classes("w-full flex-1")
-                            # I don't wanna deal with this rn so no snapshots atm
-                            # select1 = ui.select(
-                            #     ["snapshot1", "snapshot2", "snapshot3"],
-                            #     value="snapshot1",
-                            # ).classes("border")
-                            # ui.button("< Revert to snapshot").classes("w-full flex-1")
-                        ui.separator()
-                        with ui.expansion("VM's in pool:").classes("w-full"):
-                            for vmid in vm_ids_in_pool:
-                                with ui.row().classes(
-                                    "w-full justify-between items-center mt-4"
-                                ):
-                                    ui.label(get_vm_name(vmid))
-                                    ui.label(
-                                        f"Status: {get_vm_status(vmid, self.node_name)}"
-                                    )
-                                    ui.button(
-                                        "Start",
-                                        on_click=partial(
-                                            start_vm, vmid, self.node_name
-                                        ),
-                                    )
-                                    ui.button(
-                                        "Stop",
-                                        on_click=partial(stop_vm, vmid, self.node_name),
-                                    )
-                                    ui.button(
-                                        "Restart",
-                                        on_click=partial(
-                                            restart_vm, vmid, self.node_name
-                                        ),
-                                    )
-                                    ui.separator()
-            # ui.separator()
+
+                for pool in get_vapps():  # for each pool/VAPP... do this
+                    self.render_pool(pool)
 
         except Exception as e:
             # print(e)
             ui.notify(f"Error occurred: {e}", position="top-right", type="warning")
+
+    def render_pool(self, pool):
+        pool_name = pool.get("poolid")
+        vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
+
+        with ui.card().classes("w-full border"):
+            ui.markdown(f"### {pool_name.replace('_','\\_')}")  # add in delim for _
+            ui.label(pool.get("comment"))
+            ui.label("WAN ip: someip")
+            self.render_pool_controls(pool_name, vm_ids_in_pool)
+            self.render_pool_vms(vm_ids_in_pool)
+
+    def render_pool_controls(self, pool_name, vm_ids_in_pool):
+        with ui.row().classes("w-full justify-between items-center mt-4 flex-1"):
+            ui.button(
+                "Start",
+                on_click=partial(
+                    start_multiple_vms,
+                    vmid_list=vm_ids_in_pool,
+                    node=self.node_name,
+                ),
+            ).classes("w-full flex-1")
+
+            ui.button(
+                "Stop",
+                on_click=partial(
+                    stop_multiple_vms,
+                    vmid_list=vm_ids_in_pool,
+                    node=self.node_name,
+                ),
+            ).classes("w-full flex-1")
+
+            ui.button(
+                "Restart",
+                on_click=partial(
+                    restart_multiple_vms,
+                    vmid_list=vm_ids_in_pool,
+                    node=self.node_name,
+                ),
+            ).classes("w-full flex-1")
+
+            ui.button(
+                "Delete VAPP",
+                on_click=partial(
+                    delete_vapp,
+                    vmid_list=vm_ids_in_pool,
+                    node=self.node_name,
+                    pool_name=pool_name,
+                ),
+            ).classes("w-full flex-1")
+
+            # I don't wanna deal with this rn so no snapshots atm
+            # select1 = ui.select(
+            #     ["snapshot1", "snapshot2", "snapshot3"],
+            #     value="snapshot1",
+            # ).classes("border")
+            # ui.button("< Revert to snapshot").classes("w-full flex-1")
+
+        ui.separator()
+
+    def render_pool_vms(self, vm_ids_in_pool):
+        with ui.expansion("VM's in pool:").classes("w-full"):
+            for vmid in vm_ids_in_pool:
+                self.render_single_vm(vmid)
+
+    def render_single_vm(self, vmid):
+        with ui.row().classes("w-full justify-between items-center mt-4"):
+            ui.label(get_vm_name(vmid))
+            ui.label(f"Status: {get_vm_status(vmid, self.node_name)}")
+            ui.button("Start", on_click=partial(start_vm, vmid, self.node_name))
+            ui.button("Stop", on_click=partial(stop_vm, vmid, self.node_name))
+            ui.button(
+                "Revert to snapshot",
+                on_click=partial(self.render_revert_snapshots_dialogue, vmid),
+            )
+            ui.button(
+                "Take Snapshot",
+                on_click=partial(self.render_take_snapshots_dialogue, vmid),
+            )
+            ui.button("Restart", on_click=partial(restart_vm, vmid, self.node_name))
+            ui.separator()
+
+    async def render_revert_snapshots_dialogue(self, vmid):
+        """
+        qdialog for snapshots
+        """
+        with ui.dialog() as dialog, ui.card():
+            snapshot_options = list_snapshots(node=self.node_name, vmid=vmid)
+
+            with ui.element().classes("w-full"):
+                snapshot_name_input = ui.select(
+                    options=snapshot_options,
+                    label="VM Snapshots",
+                )
+
+            with ui.row():
+                ui.button(
+                    "Revert to Snapshot",
+                    on_click=lambda: dialog.submit(
+                        {"snapshot_name": snapshot_name_input.value}
+                    ),
+                )
+                ui.button("Cancel", on_click=lambda: dialog.submit(None))
+
+        dialog.open()
+        result = await dialog
+
+        if result is not None:
+            try:
+                revert_snapshot(
+                    snapshot_name=result.get("snapshot_name", ""),
+                    vmid=vmid,
+                    node=self.node_name,
+                )
+                ui.notify(
+                    f"VM {vmid} reverted to snapshot '{result.get('snapshot_name')}'",
+                    position="top-right",
+                )
+            except Exception as e:
+                logger.error(f"Error reverting VM {vmid} to snapshot: {e}")
+                ui.notify(
+                    f"Error reverting snapshot: {e}",
+                    type="warning",
+                    position="top-right",
+                )
+        else:
+            ui.notify("Snapshot reverter was cancelled", position="top-right")
+
+    async def render_take_snapshots_dialogue(self, vmid):
+        """
+        qdialog for snapshots
+        """
+        with ui.dialog() as dialog, ui.card():
+            with ui.element().classes("w-full"):
+                snapshot_name_input = ui.input("Snapshot Name:")
+                snapshot_desc_input = ui.input("Snapshot Desc:")
+
+            with ui.row():
+                ui.button(
+                    "Take Snapshot",
+                    on_click=lambda: dialog.submit(
+                        {
+                            "snapshot_name": snapshot_name_input.value,
+                            "snapshot_desc_input": snapshot_desc_input.value,
+                        }
+                    ),
+                )
+                ui.button("Cancel", on_click=lambda: dialog.submit(None))
+
+        dialog.open()
+        result = await dialog
+
+        if result is not None:
+            try:
+                take_snapshot(
+                    vmid=vmid,
+                    node=self.node_name,
+                    snapshot_name=result["snapshot_name"],
+                    description=result["snapshot_desc_input"] or "",
+                )
+                ui.notify(
+                    f"Snapshot '{result['snapshot_name']}' taken for VM {vmid}",
+                    position="top-right",
+                )
+            except Exception as e:
+                logger.error(f"Error taking snapshot for VM {vmid}: {e}")
+                ui.notify(
+                    f"Error taking snapshot: {e}", type="warning", position="top-right"
+                )
+        else:
+            ui.notify("Snapshot creation was cancelled", position="top-right")
+
+
+# list_snapshots

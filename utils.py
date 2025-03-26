@@ -7,6 +7,8 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ProxmoxUtils")
 
+# this entire thing probably should have been a class that gets inhereted, but whatever it works
+
 
 def get_proxmox_class():
     # logger.info("Fetching Proxmox credentials and initializing API class")
@@ -463,3 +465,77 @@ def get_next_available_vmid(minimum=1000):
         candidate += 1
 
     return candidate
+
+
+def list_snapshots(vmid, node):
+    """
+    Returns a list of snapshot names for a given VM.
+
+    Args:
+        vmid (int): ID of the VM
+        node (str): Node where the VM resides
+
+    Returns:
+        List[str]: List of snapshot names
+    """
+    logger.info(f"Fetching snapshot list for VM {vmid} on node {node}")
+    proxmox = get_proxmox_class()
+    try:
+        snapshots = proxmox.nodes(node).qemu(vmid).snapshot.get()
+        snapshot_names = [snap["name"] for snap in snapshots]
+        logger.info(f"Found snapshots: {snapshot_names}")
+        return snapshot_names
+    except Exception as e:
+        logger.error(f"Error listing snapshots for VM {vmid}: {e}")
+        ui.notify(f"Error listing snapshots: {e}", type="warning", position="top-right")
+        return []
+
+
+def revert_snapshot(vmid, node, snapshot_name):
+    """
+    Reverts a VM to a given snapshot.
+
+    Args:
+        vmid (int): VM ID
+        node (str): Node where the VM resides
+        snapshot_name (str): The name of the snapshot to revert to
+    """
+    logger.info(f"Reverting VM {vmid} on node {node} to snapshot '{snapshot_name}'")
+    proxmox = get_proxmox_class()
+    try:
+        proxmox.nodes(node).qemu(vmid).snapshot(snapshot_name).rollback.post()
+        ui.notify(
+            f"Reverted VM {vmid} to snapshot '{snapshot_name}'", position="top-right"
+        )
+    except Exception as e:
+        logger.error(f"Error reverting VM {vmid} to snapshot '{snapshot_name}': {e}")
+        ui.notify(
+            f"Error reverting snapshot: {e}", type="warning", position="top-right"
+        )
+
+
+def take_snapshot(vmid, node, snapshot_name, description=""):
+    """
+    Takes a snapshot of the specified VM.
+
+    Args:
+        vmid (int): VM ID
+        node (str): Node where the VM resides
+        snapshot_name (str): Name of the new snapshot
+        description (str): Optional description of the snapshot
+    """
+    logger.info(f"Creating snapshot '{snapshot_name}' for VM {vmid} on node {node}")
+    proxmox = get_proxmox_class()
+    try:
+        proxmox.nodes(node).qemu(vmid).snapshot.post(
+            snapname=snapshot_name,
+            description=description,
+        )
+        logger.info(f"Snapshot '{snapshot_name}' created successfully for VM {vmid}")
+        ui.notify(
+            f"Snapshot '{snapshot_name}' created for VM {vmid}",
+            position="top-right",
+        )
+    except Exception as e:
+        logger.error(f"Error taking snapshot of VM {vmid}: {e}")
+        ui.notify(f"Error taking snapshot: {e}", type="warning", position="top-right")
