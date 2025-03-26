@@ -281,8 +281,16 @@ def create_nic(iface_name, node, type="bridge"):
             f"Creating NIC: Node: {node}, interface name:{iface_name} Type:{type} ",
             position="top-right",
         )
-        proxmox.nodes(node).network.post(iface=iface_name, node=node, type=type)
-        logger.info(f"NIC '{iface_name}' successfully created on {node}")
+        proxmox.nodes(node).network.post(
+            iface=iface_name,
+            node=node,
+            type=type,
+            autostart="1",
+        )
+        logger.info(f"NIC '{iface_name}' created. Reloading network config...")
+
+        # reload net config
+        proxmox.nodes(node).network.put()
         ui.notify(
             f"NIC {iface_name} created successfully on {node}",
             position="top-right",

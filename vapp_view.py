@@ -262,7 +262,9 @@ class TemplatesView:
                             vapp_name_input = ui.input("New VAPP Name").classes(
                                 "flex-1"
                             )
-                            ui.checkbox("Start Pool post clone").classes("flex-1")
+                            self.start_vms_post_clone = ui.checkbox(
+                                "Start Pool post clone", value=True
+                            ).classes("flex-1")
                             ui.button(
                                 "Clone",
                                 on_click=lambda tpn=template_pool_name, inp=vapp_name_input: self.create_vapp_from_template(
@@ -308,9 +310,11 @@ class TemplatesView:
             type="bridge",
         )
 
+        list_of_new_vm_ids = []
         # .2. Clone all VM's - thinclone
         for vm_id in vms_in_template_pool:
             new_vmid = get_next_available_vmid()
+            list_of_new_vm_ids.append(new_vmid)
             logger.info(f"Cloning VM {vm_id} into new VM {new_vmid}")
             clone_host(
                 new_id=new_vmid, vmid_of_host_to_clone=vm_id, node=self.node_name
@@ -328,10 +332,17 @@ class TemplatesView:
             add_existing_bridge_to_vm(
                 vmid=new_vmid,
                 node=self.node_name,
-                bridge_name=f"PPM_{new_pool_name}_NIC",
+                bridge_name=f"{new_pool_name}_NIC",
             )
 
+            # if self.start_vms_post_clone:
+            #     start_vm(node=self.node_name, vmid=new_vmid)
+
             new_vmid += 1
+
+        if self.start_vms_post_clone:
+
+            start_multiple_vms(vmid_list=list_of_new_vm_ids, node=self.node_name)
 
 
 class ActivePoolsView:
