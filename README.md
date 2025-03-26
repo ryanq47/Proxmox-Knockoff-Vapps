@@ -366,6 +366,6 @@ Templates:
 
 
 Active Vapps:
-![image](https://github.com/user-attachments/assets/78b11b5e-fc24-40ad-ba2f-ab1e3f6b0b63)
+![image](https://github.com/user-attachments/assets/e5877c06-4c34-4dab-9267-9988ab066b8d)
 
 
