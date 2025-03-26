@@ -133,7 +133,7 @@ After the system creates the base template pool, switch over to **Proxmox** and 
         
 2.  **Remove any NIC's from the host**:
     
-    -   Remove any NIC's from the host. At VAPP creation time, a NIC is added to each VM instance, and having mulitple NIC's could result in unintended bridging.
+    -   Remove any NIC's from the host. At VAPP creation time, a NIC is created, and added to each VM instance, and having mulitple NIC's could result in unintended bridging.
       - The main exception to this would be the WAN nic on a firewall machine. See `Recommended Template Configuration`
         
 3.  **Add Final VMs to the Template Pool**:
