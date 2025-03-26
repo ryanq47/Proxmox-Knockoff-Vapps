@@ -77,7 +77,7 @@ ui.run(storage_secret="CHANGE_ME_PLEASE", host="0.0.0.0", show=False, dark=True)
 Currently, no data is stored in sessions other than an `authenticated: True/False` flag, so it's not critical to change, but just good practice.
   
 
-Access via: [http://127.0.0.1:8080](http://127.0.0.1:8080) or `http://<your_ip>:8080`
+Finally: Access via: [http://127.0.0.1:8080](http://127.0.0.1:8080) or `http://<your_ip>:8080`
 
   
 
