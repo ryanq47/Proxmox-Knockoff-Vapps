@@ -67,7 +67,7 @@ Absolutely, here’s a cleaner, clearer version of your VAPP template creation g
 
 ----------
 
-## Creating a VAPP Template
+# Creating a VAPP Template
 
 A **VAPP Template** is a pre-configured group of VMs, NIC's, and settings that can be cloned and reused to rapidly spin up consistent lab environments.
 
@@ -99,7 +99,7 @@ A **VAPP Template** is a pre-configured group of VMs, NIC's, and settings that c
     
 -   This name will be used to:
     
-    -   Create a **dedicated NIC**: `PPM_<TEMPLATE_NAME>_NIC`
+    <!-- -   Create a **dedicated NIC**: `PPM_<TEMPLATE_NAME>_NIC` -->
         
     -   Create a **resource pool**: `PPM_TEMPLATE_<TEMPLATE_NAME>`
         
@@ -114,11 +114,11 @@ A **VAPP Template** is a pre-configured group of VMs, NIC's, and settings that c
         
     2.  Converts those clones into templates
         
-    3.  Creates a NIC named `PPM_<TEMPLATE_NAME>_NIC`
+    <!-- 3.  Creates a NIC named `PPM_<TEMPLATE_NAME>_NIC` -->
         
-    4.  Creates a Proxmox pool named `PPM_TEMPLATE_<TEMPLATE_NAME>`
+    3.  Creates a Proxmox pool named `PPM_TEMPLATE_<TEMPLATE_NAME>`
         
-    5.  Adds the cloned templates to the pool
+    4.  Adds the cloned templates to the pool
         
 
 ----------
@@ -133,9 +133,10 @@ After the system creates the base template pool, switch over to **Proxmox** and 
         
     -   Add tools or configurations specific to the lab purpose.
         
-2.  **Attach the VAPP NIC**:
+2.  **Remove any NIC's from the host**:
     
-    -   Add `PPM_<TEMPLATE_NAME>_NIC` to each VM you want networked together.
+    -   Remove any NIC's from the host. At VAPP creation time, a NIC is added to each VM instance, and having mulitple NIC's could result in unintended bridging.
+      - The main exception to this would be the WAN nic on a firewall machine. See `Recommended Template Configuration`
         
 3.  **Add Final VMs to the Template Pool**:
     
