@@ -4,7 +4,7 @@
 
 A pool-based control plane for ProxmoxVE that mimics "VAPP" functionality. This tool is not a full vApp implementation, but a wrapper around the Proxmox API for managing grouped VM environments on a *per-node* basis.
 
-  
+Again, this is meant to be PER NODE, not for an entire cluster. I don't have the magic skills to make "Vapps" work accross multiple nodes. As a fix, I included a dropdown to switch nodes if you are running multiple/a clustered env, to make the tool somewhat useful in that scenario.
 
 ---
 
