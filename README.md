@@ -125,7 +125,7 @@ A **VAPP Template** is a pre-configured group of VMs, NIC's, and settings that c
 
 After the system creates the base template pool, switch over to **Proxmox** and complete the setup:
 
-1.  **Start and configure each VM** as needed:
+1.  **Create and configure each additional VM** as needed:
     
     -   Set up users, network settings, or services.
         
@@ -141,7 +141,12 @@ After the system creates the base template pool, switch over to **Proxmox** and 
     -   Make sure every VM you want in the final template is added to:
         
         -   `PPM_TEMPLATE_<TEMPLATE_NAME>`
-            
+
+4. **Convert VMs to Templates**
+
+ - Once your VMs are finalized and added to the pool, convert them to templates via the Proxmox GUI.
+
+ - These templates will then be used for cloning when creating new VAPP instances.            
 
 ----------
 ### Recommended Template Configuration
