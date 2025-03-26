@@ -348,6 +348,7 @@ This gives you a clean, deployable red team lab in one click.
 
 ## Screenshot
 
-  
+
+Overview of what a deployed lab may look like:
 
 ![image](https://github.com/user-attachments/assets/debc45a5-1ef1-473a-9bd0-9e9925ee41bc)
