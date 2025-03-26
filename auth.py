@@ -7,7 +7,6 @@ from fastapi.responses import RedirectResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from database import set_credential
 
-jwt_regex = r"^[A-Za-z0-9-_]+?\.[A-Za-z0-9-_]+\.([A-Za-z0-9-_]+)?$"
 unrestricted_page_routes = {"/login"}
 
 
