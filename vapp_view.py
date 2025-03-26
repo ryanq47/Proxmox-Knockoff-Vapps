@@ -180,11 +180,6 @@ class VappCreatorView:
 
             # create a NIC, ex: "POOLNAME-NIC"
             # https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/network
-            create_nic(
-                iface_name=f"PPM_{vapp_name}_NIC",
-                node=self.node_name,  # user input for which node to clone to
-                type="bridge",
-            )
 
             # Create template pool,
             template_pool_name = f"PPM_TEMPLATE_{vapp_name}"
@@ -303,6 +298,13 @@ class TemplatesView:
         create_pool(poolid=new_pool_name)
         logger.info(f"Created new pool '{new_pool_name}'")
 
+        # creat nic EXPLICITLY on new vapp creation, NOT at template time like it used to be
+        create_nic(
+            iface_name=f"PPM_{new_pool_name}_NIC",
+            node=self.node_name,  # user input for which node to clone to
+            type="bridge",
+        )
+
         # .2. Clone all VM's - thinclone
         for vm_id in vms_in_template_pool:
             new_vmid = get_next_available_vmid()
@@ -320,9 +322,11 @@ class TemplatesView:
                 vmid=new_vmid,
             )
 
-            # add_existing_bridge_to_vm(
-            #     vmid=new_vmid, node=self.node_name, bridge_name=f"{new_pool_name}_NIC"
-            # )
+            add_existing_bridge_to_vm(
+                vmid=new_vmid,
+                node=self.node_name,
+                bridge_name=f"PPM_{new_pool_name}_NIC",
+            )
 
             new_vmid += 1
 
