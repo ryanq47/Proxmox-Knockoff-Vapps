@@ -170,6 +170,17 @@ To ensure isolation and full control of internal traffic, **you should always in
 
 ---
 
+Optional: Add Kasm for VDI-style Access
+For streamlined browser-based access to your lab machines, it's a good idea to include something like Kasm Workspaces.
+
+- Deploy Kasm as a VM inside the VAPP Template
+
+- Forward the needed KASM ports to access Kasm externally from the WAN side of the FW.
+
+This lets you interact with all your lab systems via a web browser and is handy for VDI-style workflows, remote labs, and shared access.
+
+---
+
 ### Example:
 
 You're building a red team lab:
