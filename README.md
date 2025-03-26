@@ -63,8 +63,6 @@ The tool listens on `0.0.0.0:8080`.
   
   
 
-Absolutely, here’s a cleaner, clearer version of your VAPP template creation guide — rewritten for clarity, structure, and flow, while retaining all the key steps and context from your current setup.
-
 ----------
 
 # Creating a VAPP Template
