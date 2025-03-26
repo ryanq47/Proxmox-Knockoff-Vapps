@@ -144,9 +144,9 @@ After the system creates the base template pool, switch over to **Proxmox** and 
 
 4. **Convert VMs to Templates**
 
- - Once your VMs are finalized and added to the pool, convert them to templates via the Proxmox GUI.
+   - Once your VMs are finalized and added to the pool, convert them to templates via the Proxmox GUI (right click on VM -> `convert to template`)
 
- - These templates will then be used for cloning when creating new VAPP instances.            
+   - These templates will then be used for cloning when creating new VAPP instances.            
 
 ----------
 ### Recommended Template Configuration
