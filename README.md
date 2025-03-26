@@ -170,7 +170,7 @@ To ensure isolation and full control of internal traffic, **you should always in
 
 ---
 
-Optional: Add Kasm for VDI-style Access
+#### Optional: Add Kasm for VDI-style Access
 For streamlined browser-based access to your lab machines, it's a good idea to include something like Kasm Workspaces.
 
 - Deploy Kasm as a VM inside the VAPP Template
