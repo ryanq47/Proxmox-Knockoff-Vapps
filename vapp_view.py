@@ -1,6 +1,4 @@
 from nicegui import app, ui
-import requests
-import yarl
 from utils import *
 from functools import partial
 
