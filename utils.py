@@ -63,6 +63,8 @@ def delete_vapp(vmid_list, node, pool_name):
     2. NIC in Pool
     3. Pool itself
 
+    pool_name: PPM_<VAPP_NAME>
+
     """
     logger.debug("Attmepting to delete VAPP")
 
@@ -70,7 +72,7 @@ def delete_vapp(vmid_list, node, pool_name):
         delete_vm(vmid, node)
 
     # delete NIC - format it this way. Easiest to do this rather than pass in the NIC
-    iface_name = f"PPM_{pool_name}_NIC"
+    iface_name = f"{pool_name}_NIC"
     delete_nic(node=node, iface_name=iface_name)
 
     # delete pool
@@ -105,6 +107,7 @@ def delete_vm(vmid, node):
             else:
                 logger.warning(f"VM {vmid} did not shut down in time.")
 
+        ui.notify(f"Deleting VM {vmid}", position="top-right")
         logger.info(f"Deleting VM {vmid}")
         proxmox.nodes(node).qemu(vmid).delete()
         logger.info(f"VM {vmid} deleted successfully")
@@ -268,20 +271,20 @@ def create_nic(iface_name, node, type="bridge"):
     )
     proxmox = get_proxmox_class()
     try:
-        for _node in proxmox.nodes.get():
-            node_name = _node["node"]
-            logger.debug(f"Checking node: {_node}")
-            if node == node_name:
-                ui.notify(
-                    f"Creating NIC: Node: {node}, interface name:{iface_name} Type:{type} ",
-                    position="top-right",
-                )
-                proxmox.nodes(node).network.post(iface=iface_name, node=node, type=type)
-                logger.info(f"NIC '{iface_name}' successfully created on {node}")
-                ui.notify(
-                    f"NIC {iface_name} created successfully on {node}",
-                    position="top-right",
-                )
+        # for _node in proxmox.nodes.get():
+        #     node_name = _node["node"]
+        #     logger.debug(f"Checking node: {_node}")
+        #     if node == node_name:
+        ui.notify(
+            f"Creating NIC: Node: {node}, interface name:{iface_name} Type:{type} ",
+            position="top-right",
+        )
+        proxmox.nodes(node).network.post(iface=iface_name, node=node, type=type)
+        logger.info(f"NIC '{iface_name}' successfully created on {node}")
+        ui.notify(
+            f"NIC {iface_name} created successfully on {node}",
+            position="top-right",
+        )
     except Exception as e:
         logger.error(f"Error creating NIC {iface_name} on node {node}: {e}")
         ui.notify(f"Error creating NIC: {e}", position="top-right", type="warning")
@@ -308,7 +311,7 @@ def add_existing_bridge_to_vm(vmid, node, bridge_name, model="virtio"):
             nic_index += 1
 
         nic_key = f"net{nic_index}"
-        nic_value = f"{model}=bridge={bridge_name}"  # Let Proxmox generate MAC
+        nic_value = f"model={model},bridge={bridge_name}"
 
         proxmox.nodes(node).qemu(vmid).config.post(**{nic_key: nic_value})
 
@@ -436,7 +439,7 @@ def get_vapps() -> list:
     for pool in pools:
         print(pool)
         pool_name = pool.get("poolid")
-        if not "PPM_TEMPLATE" in pool_name:
+        if "PPM_" in pool_name and "PPM_TEMPLATE" not in pool_name:
             pool_list.append(pool)
 
     return pool_list

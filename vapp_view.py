@@ -146,6 +146,9 @@ class VappCreatorView:
                 ui.button(
                     "Create Template from Selected VM's", on_click=self._create_template
                 ).classes("w-full flex-1")
+                ui.label(
+                    "Note... please just click this once. There's a UI bug that prevents any notifications from coming on screen here. On success, a new Template will show up in the Template section"
+                )
                 with ui.stepper_navigation():
                     ui.button("Back", on_click=stepper.previous)
 
@@ -278,11 +281,13 @@ class TemplatesView:
         """
         Does a few things:
 
-        1. Creates pool "PPM_<VAPP_NAME>
+        1. Creates pool "PPM_<VAPP_NAME>"
         2. Clones each VM template with the name PPM_TEMPLATE_<TEMPLATE_NAME>
         3. Add those new VM's to that pool
         4. Starts the VM's in that pool
         """
+
+        new_pool_name = f"PPM_{new_pool_name}"
 
         logger.info(
             f"Creating VAPP from template pool '{template_pool_name}' into new pool '{new_pool_name}'"
@@ -300,7 +305,7 @@ class TemplatesView:
 
         # creat nic EXPLICITLY on new vapp creation, NOT at template time like it used to be
         create_nic(
-            iface_name=f"PPM_{new_pool_name}_NIC",
+            iface_name=f"{new_pool_name}_NIC",
             node=self.node_name,  # user input for which node to clone to
             type="bridge",
         )
@@ -347,7 +352,9 @@ class ActivePoolsView:
                     pool_name = pool.get("poolid")
                     vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
                     with ui.card().classes("w-full border"):
-                        ui.markdown(f"### {pool_name}")
+                        ui.markdown(
+                            f"### {pool_name.replace("_","\_")}"
+                        )  # add in delim for _
                         ui.label(pool.get("comment"))
                         ui.label("WAN ip: someip")
                         with ui.row().classes(
