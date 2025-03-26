@@ -359,6 +359,8 @@ And a visual representation of what happens behind the scenes:
 
 #### Web GUI:
 
+Pool/VAPP Creator:
+![image](https://github.com/user-attachments/assets/0e8f60c0-74d4-4a75-a111-ba07cc4d1889)
 
 
 Templates:
