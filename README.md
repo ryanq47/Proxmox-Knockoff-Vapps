@@ -1,3 +1,7 @@
+# Todo:
+
+ - [ ] Assign NIC to new VM's in VAPP
+
 # Proxmox-Knockoff-Vapps
 
 A Pool Based, Knockoff Vapps control plane for ProxmoxVE. I got tired of not having vapps in Proxmox, so I decided to implement my own.
@@ -204,8 +208,6 @@ You're building a red team lab:
     
 -   Configure them in Proxmox
     
--   Attach `PPM_REDTEAM_NIC` to the **LAN side** of the firewall
-
 -   Attach the **WAN side** of the firewall to `vmbr0`
     
 -   Add all machines to the pool `PPM_TEMPLATE_REDTEAM`
