@@ -1,258 +1,353 @@
-# Todo:
-
- - [ ] Assign NIC to new VM's in VAPP
-
 # Proxmox-Knockoff-Vapps
 
-A Pool Based, Knockoff Vapps control plane for ProxmoxVE. I got tired of not having vapps in Proxmox, so I decided to implement my own.
-
   
 
-Note, this is not a full Vapp implementation, this is just a wrapper around the proxmox API, meant to handle these "Vapps" on one ProxmoxVE instance, using pools & some magic. 
+A pool-based control plane for ProxmoxVE that mimics "VAPP" functionality. This tool is not a full vApp implementation, but a wrapper around the Proxmox API for managing grouped VM environments on a *per-node* basis.
 
   
-
-Additionally, this is meant to be PER NODE. I don't have the magic skills to make "Vapps" work accross multiple nodes, so everything is per node. There is a dropdown to switch nodes as well if you are runing a clustered enviornment
-  
-
-## Tool Goals:
-
-- Easy creation of VAPP /VApp templates
-
-	- Select live VM's to add to a VAPP  template
-
-  
-- Easy Management of VAPP 
-
-	- Start
-
-	- Stop
-
-	- Restart
-  
-
-- Easy deployment of VAPP 
-
-	- Management of each VM
-
-	- Create VAPP instances from VAPP  Templates
-
-  
-  
-
-## Running the tool:
-
-  
-
-#### Install the reqs:
-
-`pip install -r requirements.txt`
-
-  
-
-#### Run the tool:
-
-`python3 main.py`
-
-  
-
-#### Navigate to the Web Interface:
-
-The tool listens on `0.0.0.0:8080`.
-
-  
-
-`http://127.0.0.1:8080` or `http://<your_ip>:8080`
-
-  
-  
-
-----------
-
-# Creating a VAPP Template
-
-A **VAPP Template** is a pre-configured group of VMs, NIC's, and settings that can be cloned and reused to rapidly spin up consistent lab environments.
-
-###  Step-by-Step: Create a New VAPP Template
-
-----------
-
-### **Step 1: Launch the VAPP Creator**
-
-1.  Open the **Proxmox Pools Manager** web interface.
-    
-2.  Click the **"Vapp Creator"** section to expand it.
-    
-
-----------
-
-### **Step 2: Select Base VMs (Optional)**
-
--   If you have existing VMs you'd like to include in the template (e.g., Kali, Windows, Firewall, etc.), select them from the VM table.
-    
--   These machines will be cloned as a starting point for your template.
-    
-
-----------
-
-### **Step 3: Enter a Template Name**
-
--   Enter a **name** for the VAPP template (e.g., `ad_lab`, `pentest_stack`).
-    
--   This name will be used to:
-    
-    <!-- -   Create a **dedicated NIC**: `PPM_<TEMPLATE_NAME>_NIC` -->
-        
-    -   Create a **resource pool**: `PPM_TEMPLATE_<TEMPLATE_NAME>`
-        
-
-----------
-
-### **Step 4: Click "Create Template"**
-
--   This triggers the following actions automatically:
-    
-    1.  Clones the selected VMs (if any)
-        
-    2.  Converts those clones into templates
-        
-    <!-- 3.  Creates a NIC named `PPM_<TEMPLATE_NAME>_NIC` -->
-        
-    3.  Creates a Proxmox pool named `PPM_TEMPLATE_<TEMPLATE_NAME>`
-        
-    4.  Adds the cloned templates to the pool
-        
-
-----------
-
-### **Step 5: Configure the Template VMs (In Proxmox)**
-
-After the system creates the base template pool, switch over to **Proxmox** and complete the setup:
-
-1.  **Create and configure each additional VM** as needed:
-    
-    -   Set up users, network settings, or services.
-        
-    -   Add tools or configurations specific to the lab purpose.
-        
-2.  **Remove any NIC's from the host**:
-    
-    -   Remove any NIC's from the host. At VAPP creation time, a NIC is created, and added to each VM instance, and having mulitple NIC's could result in unintended bridging.
-      - The main exception to this would be the WAN nic on a firewall machine. See `Recommended Template Configuration`
-        
-3.  **Add Final VMs to the Template Pool**:
-    
-    -   Make sure every VM you want in the final template is added to:
-        
-        -   `PPM_TEMPLATE_<TEMPLATE_NAME>`
-
-4. **Convert VMs to Templates**
-
-   - Once your VMs are finalized and added to the pool, convert them to templates via the Proxmox GUI (right click on VM -> `convert to template`)
-
-   - These templates will then be used for cloning when creating new VAPP instances.            
-
-----------
-### Recommended Template Configuration
-
-To ensure isolation and full control of internal traffic, **you should always include a firewall** VM in your VAPP template.
-
-#### Basic Firewall Layout:
-
--   **LAN interface** of the firewall should be connected to the VAPP NIC:
-    
-    -   `PPM_<TEMPLATE_NAME>_NIC`
-        
--   **WAN interface** can be connected to any other Proxmox bridge:
-    
-    -   e.g., `vmbr0`, `vmbr1`, or a real uplink
-        
-
-####  Why This Matters:
-
--   Keeps your lab traffic isolated by default
-    
--   Allows NAT/firewalling between your VAPP and the outside world
-    
--   Gives you visibility and control over all traffic
-- Keeps IP's and other internal details consistent
 
 ---
 
+  
+
+## Tool Features
+
+  
+
+### VAPP Template Management
+
+- Select existing VMs to build templates
+
+- Automatically clone and convert VMs to templates
+
+- Create dedicated resource pools
+
+  
+
+### VAPP Instance Management
+
+- Clone full environments from templates
+
+- Automatically assign NICs to new VAPPs
+
+- Start, stop, restart, snapshot, and delete entire VAPPs or individual VMs
+
+> Note: Snapshots exist per vm, full VAPP snapshots are not implemented yet
+
+  
+
+---
+
+  
+
+## System Requirements
+
+  
+
+- Python 3.9+
+
+- Proxmox VE API access
+
+- NiceGUI frontend
+
+  
+
+---
+
+  
+
+## Installation & Running
+
+  
+
+```bash
+
+pip  install  -r  requirements.txt
+
+python3  main.py
+
+```
+
+  
+
+Access via: [http://127.0.0.1:8080](http://127.0.0.1:8080) or `http://<your_ip>:8080`
+
+  
+
+---
+
+  
+
+## What This Tool Creates (Automatically)
+
+  
+
+Depending on the action, here’s a breakdown of what this tool does:
+
+  
+
+### When You Create a VAPP Template:
+
+1.  **Clone selected VMs** to create independent copies
+
+2.  **Convert each clone to a VM Template**
+
+3.  **Create a Proxmox Pool**: `PPM_TEMPLATE_<TEMPLATE_NAME>`
+
+4.  **Add all templates to that pool**
+
+  
+
+> Note: NICs are **not** created at template time.
+
+  
+
+---
+
+  
+
+### When You Deploy a VAPP Instance (from Template):
+
+1.  **Create a new Pool**: `PPM_<VAPP_NAME>`
+
+2.  **Create a new NIC**: `PPM_<VAPP_NAME>_NIC`
+
+3.  **Clone every template VM in the selected template pool**
+
+4.  **Add the clones to the new pool**
+
+5.  **Attach the newly created NIC to each cloned VM**
+
+6.  **(Optional)** Start the pool after creation
+
+  
+
+---
+
+  
+
+## Creating a VAPP Template
+
+  
+
+A **VAPP Template** is a reusable stack of configured VMs. You can select live VMs, clone them, and turn them into a template.
+
+  
+
+Alternatively, you can create a template without any VMs, and add in some manually via the Proxox web interface (I'd reccomend this route for more advanced/pre-configured VAPP setups)
+
+  
+
+### Steps
+
+  
+
+1.  **Launch the VAPP Creator**
+
+- From the UI, expand **"Vapp Creator"**
+
+  
+
+2.  **Select VMs to include** (optional)
+
+- These are cloned and turned into templates
+
+  
+
+3.  **Enter a Template Name**
+
+- This becomes `PPM_TEMPLATE_<NAME>`
+
+  
+
+4.  **Click "Create Template"**
+
+- The tool will handle cloning, converting, and pool creation
+
+  
+
+5.  **Post-creation Setup in Proxmox (Manual)**
+
+- Finalize, and/or install additional VMs (install tools, tweak settings)
+
+- Remove all NICs (the tool adds new ones later)
+
+> Note: Don't remove the WAN interface if you have a firewall
+
+- Add any newly created VMs to the pool `PPM_TEMPLATE_<NAME>`
+
+- Convert them to templates via Proxmox GUI
+
+  
+
+---
+
+  
+
+### Recommended Template Configuration
+
+  
+
+To ensure isolation and full control of internal traffic, **you should always include a firewall** VM in your VAPP template.
+
+  
+
+#### Basic Firewall Layout:
+
+  
+
+-  **LAN interface** of the firewall should be connected to the VAPP NIC:
+
+-  `PPM_<TEMPLATE_NAME>_NIC`
+
+-  **WAN interface** can be connected to any other Proxmox bridge:
+
+- e.g., `vmbr0`, `vmbr1`, or a real uplink
+
+  
+
+#### Why This Matters:
+
+  
+
+- Keeps your lab traffic isolated by default
+
+- Allows NAT/firewalling between your VAPP and the outside world
+
+- Gives you visibility and control over all traffic
+
+- Keeps IP's and other internal details consistent
+
+  
+
+---
+
+  
+
 #### Optional: Add Kasm for VDI-style Access
+
 For streamlined browser-based access to your lab machines, it's a good idea to include something like Kasm Workspaces.
+
+  
 
 - Deploy Kasm as a VM inside the VAPP Template
 
+  
+
 - Forward the needed KASM ports to access Kasm externally from the WAN side of the FW.
+
+  
 
 This lets you interact with all your lab systems via a web browser and is handy for VDI-style workflows, remote labs, and shared access.
 
 ---
 
-### Example:
+  
 
-You're building a red team lab:
-
--   Template name: `redteam`
-    
--   VMs to include: Kali, pfSense, Windows Server (DC)
-    
-
-**Steps:**
-
--   Create VAPP template named `redteam`
-    
--   Clone a base Kali box, firewall, and DC if desired
-	- Or just create a new VM for each
-    
--   Configure them in Proxmox
-    
--   Attach the **WAN side** of the firewall to `vmbr0`
-    
--   Add all machines to the pool `PPM_TEMPLATE_REDTEAM`
-    
-
-You're done — this is now your reusable, isolated red team lab template.
-
-----------
-
-
-### Spawning a new VAPP:
+## Deploying a New VAPP (From Template)
 
   
 
-If you already have a VAPP template, follow these steps to spawn a new instance of it.
+Once you have a template:
 
   
 
-1. Create an instance of the VAPP in the `Templates` section, by entering a name for the VAPP, and hitting `Clone`
+1. Go to the **Templates** section
+
+2. Enter a name for the new VAPP
+
+3. Click **Clone**
 
   
 
-On refresh, the VAPP instance should show up in the "Active VAPPs" section
+The tool will:
+
+- Clone all template VMs
+
+- Create a NIC and Pool for the new instance
+
+- Attach NICs to each VM
+
+- Optionally start the environment
 
   
-  
-  
 
-#### Resources Created:
+---
 
   
 
-NIC: `PPM_<POOLNAME>_NIC`: The NIC created for the VAPP
-Pool: `PPM_<TEMPLATE_NAME>`  : The pool created to hold the VM's
+## Managing Active VAPPs
+
   
+
+From the **Active Pools** section, you can:
+
   
 
-#### Reccomended:
+- View all active VAPPs
 
- 
+- Start/Stop/Restart/Delete entire VAPPs
 
-Here's an example of a deployed Vapp:
+- Interact with each VM individually
+
+- Take/Revert snapshots on each VM
+
+  
+
+---
+
+  
+
+## Example Workflow: Red Team Lab
+
+  
+
+-  **Template Name:**  `redteam`
+
+-  **VMs:** Kali, Windows DC, pfSense
+
+  
+
+Steps:
+
+- Clone or create VMs
+
+- Convert to templates (in the Proxmox web interface)
+
+- Add to `PPM_TEMPLATE_REDTEAM` (in the Proxmox web interface)
+
+- Deploy with new name (e.g., `RT1`)
+
+  
+
+This gives you a clean, deployable red team lab in one click.
+
+  
+
+---
+
+  
+
+## Tips
+
+  
+
+- This tool is PER-NODE only (cluster support is limited)
+
+- NICs are created **only** during deployment (not at template time)
+
+- VM templates must exist before creating a new VAPP
+
+- Only use **one NIC per VM** unless you understand the networking implications
+
+  
+
+---
+
+  
+
+## Screenshot
 
   
 
 ![image](https://github.com/user-attachments/assets/debc45a5-1ef1-473a-9bd0-9e9925ee41bc)
-
-  
