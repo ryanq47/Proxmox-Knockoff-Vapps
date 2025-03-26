@@ -48,7 +48,12 @@ def restart_multiple_vms(vmid_list, node):
         restart_vm(vmid, node)
 
 
-def delete_vapp(vmid_list, node):
+# --------------------------------------
+# Delete Ops
+# --------------------------------------
+
+
+def delete_vapp(vmid_list, node, pool_name):
     """
     Deletes VAPP
 
@@ -64,9 +69,12 @@ def delete_vapp(vmid_list, node):
     for vmid in vmid_list:
         delete_vm(vmid, node)
 
-    # delete NIC
+    # delete NIC - format it this way. Easiest to do this rather than pass in the NIC
+    iface_name = f"PPM_{pool_name}_NIC"
+    delete_nic(node=node, iface_name=iface_name)
 
     # delete pool
+    delete_pool(pool_name)
 
 
 def delete_vm(vmid, node):
@@ -103,6 +111,45 @@ def delete_vm(vmid, node):
 
     except Exception as e:
         logger.error(f"Error deleting VM {vmid}: {e}")
+
+
+def delete_nic(node, iface_name):
+    """
+    Deletes a network interface (NIC) from a Proxmox node.
+
+    Args:
+        node (str): Node name
+        iface_name (str): Name of the NIC to delete (e.g., 'PPM_TEMPLATE_LAB_NIC')
+    """
+    logger.info(f"Attempting to delete NIC '{iface_name}' on node '{node}'")
+    proxmox = get_proxmox_class()
+
+    try:
+        proxmox.nodes(node).network(iface_name).delete()
+        logger.info(f"Successfully deleted NIC '{iface_name}' on node '{node}'")
+        ui.notify(f"Deleted NIC '{iface_name}' on node '{node}'", position="top-right")
+    except Exception as e:
+        logger.error(f"Error deleting NIC '{iface_name}' on node '{node}': {e}")
+        ui.notify(f"Error deleting NIC: {e}", position="top-right", type="warning")
+
+
+def delete_pool(poolid):
+    """
+    Deletes a Proxmox resource pool.
+
+    Args:
+        poolid (str): The name of the pool to delete.
+    """
+    logger.info(f"Attempting to delete pool '{poolid}'")
+    proxmox = get_proxmox_class()
+
+    try:
+        proxmox.pools(poolid).delete()
+        logger.info(f"Successfully deleted pool '{poolid}'")
+        ui.notify(f"Deleted pool '{poolid}'", position="top-right")
+    except Exception as e:
+        logger.error(f"Error deleting pool '{poolid}': {e}")
+        ui.notify(f"Error deleting pool: {e}", position="top-right", type="warning")
 
 
 def start_vm(vmid, node):

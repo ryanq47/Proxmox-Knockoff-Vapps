@@ -342,6 +342,7 @@ class ActivePoolsView:
             ).classes("w-full"):
                 proxmox_class = get_proxmox_class()
                 ui.markdown("## Active Vapps")
+                # for each pool/VAPP... do this
                 for pool in get_vapps():
                     pool_name = pool.get("poolid")
                     vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
@@ -382,6 +383,7 @@ class ActivePoolsView:
                                     delete_vapp,
                                     vmid_list=vm_ids_in_pool,
                                     node=self.node_name,
+                                    pool_name=pool_name,
                                 ),
                             ).classes("w-full flex-1")
                             # I don't wanna deal with this rn so no snapshots atm
