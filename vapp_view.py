@@ -369,8 +369,8 @@ class ActivePoolsView:
         vm_ids_in_pool = get_all_vms_in_pool(pool_name=pool_name)
 
         with ui.card().classes("w-full border"):
-            pool_name
-            ui.markdown(f"### {pool_name.replace('_', '\\_')}")  # add in delim for _
+            display_pool_name = pool_name.replace("_", "\\_")
+            ui.markdown(f"### {display_pool_name}")  # add in delim for _
             ui.label(pool.get("comment"))
             # ui.label("WAN ip: someip")
             self.render_pool_controls(pool_name, vm_ids_in_pool)
