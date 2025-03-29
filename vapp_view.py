@@ -259,9 +259,9 @@ class TemplatesView:
                         with ui.row().classes(
                             "w-full justify-between items-center mt-4 flex-1"
                         ):
-                            vapp_name_input = ui.input("New VAPP Name").classes(
-                                "flex-1"
-                            )
+                            vapp_name_input = ui.input(
+                                "New VAPP Name (7 characters MAX due to proxmox limitations)"
+                            ).classes("flex-1")
                             self.start_vms_post_clone = ui.checkbox(
                                 "Start Pool post clone", value=True
                             ).classes("flex-1")
